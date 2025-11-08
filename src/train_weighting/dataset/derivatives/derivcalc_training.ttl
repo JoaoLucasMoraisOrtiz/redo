@@ -1,0 +1,3116 @@
+@prefix tw: <http://example.org/train/vocab/> .
+
+<http://example.org/train/codeblock/cobol/v1/2881a98951356c467e5cef359cd4f366fbe6f156> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:code """       UPDATE-BOOK.
+           DISPLAY "ISBN TO UPDATE: "
+           ACCEPT WS-ISBN
+           DISPLAY "NEW TITLE: "
+           ACCEPT WS-TITLE
+           OPEN I-O BOOK-FILE
+           PERFORM UNTIL EOF
+               READ BOOK-FILE
+                   AT END EXIT PERFORM
+               END-READ
+               IF ISBN = WS-ISBN THEN
+                   MOVE WS-TITLE TO TITLE
+                   REWRITE BOOK-RECORD
+                   DISPLAY "UPDATED"
+                   EXIT PERFORM
+               END-IF
+           END-PERFORM
+           CLOSE BOOK-FILE.
+""" ;
+    tw:kind "paragraph" ;
+    tw:name "UPDATE-BOOK" .
+
+<http://example.org/train/codeblock/cobol/v1/31596190c694a80e8294adf39bd8313beb8d5c1c> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:code """       MAIN-LOOP.
+           DISPLAY "LIBRARY CRUD - COBOL V1".
+           PERFORM UNTIL WS-END = 'Y'
+               DISPLAY "C)reate R)ead U)pdate D)elete L)ist E)xit"
+               ACCEPT WS-OPTION
+               EVALUATE WS-OPTION
+                   WHEN 'C' PERFORM ADD-BOOK
+                   WHEN 'R' PERFORM READ-BOOK
+                   WHEN 'U' PERFORM UPDATE-BOOK
+                   WHEN 'D' PERFORM DELETE-BOOK
+                   WHEN 'L' PERFORM LIST-BOOKS
+                   WHEN 'E' MOVE 'Y' TO WS-END
+                   WHEN OTHER DISPLAY "INVALID OPTION"
+               END-EVALUATE
+           END-PERFORM
+           STOP RUN.
+""" ;
+    tw:kind "paragraph" ;
+    tw:name "MAIN-LOOP" .
+
+<http://example.org/train/codeblock/cobol/v1/405c861858b1f09fa627be7e586668d8f7c4a75e> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:code """       READ-BOOK.
+           DISPLAY "ISBN TO SEARCH: "
+           ACCEPT WS-ISBN
+           OPEN INPUT BOOK-FILE
+           PERFORM UNTIL EOF
+               READ BOOK-FILE
+                   AT END EXIT PERFORM
+               END-READ
+               IF ISBN = WS-ISBN THEN
+                   DISPLAY "FOUND: " TITLE " BY " AUTHOR
+                   DISPLAY "AVAILABLE: " AVAILABLE
+                   EXIT PERFORM
+               END-IF
+           END-PERFORM
+           CLOSE BOOK-FILE.
+""" ;
+    tw:kind "paragraph" ;
+    tw:name "READ-BOOK" .
+
+<http://example.org/train/codeblock/cobol/v1/5f6cfcba83c24f871276f8ba10c95ae0f13d5396> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:code """       PROGRAM-ID. LIBRARY-BASIC.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.""" ;
+    tw:kind "paragraph" ;
+    tw:name "PROGRAM-ID" .
+
+<http://example.org/train/codeblock/cobol/v1/62d4264c7e10f3b6f955f0e800c92450cd1c2f24> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:code """       DELETE-BOOK.
+           DISPLAY "ISBN TO DELETE: "
+           ACCEPT WS-ISBN
+           OPEN I-O BOOK-FILE
+           PERFORM UNTIL EOF
+               READ BOOK-FILE
+                   AT END EXIT PERFORM
+               END-READ
+               IF ISBN = WS-ISBN THEN
+                   DELETE BOOK-FILE RECORD
+                   DISPLAY "DELETED"
+                   EXIT PERFORM
+               END-IF
+           END-PERFORM
+           CLOSE BOOK-FILE.
+""" ;
+    tw:kind "paragraph" ;
+    tw:name "DELETE-BOOK" .
+
+<http://example.org/train/codeblock/cobol/v1/924c943c8113ea298001bd833c73d8cd338085ad> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:code """       FILE-CONTROL.
+           SELECT BOOK-FILE ASSIGN TO "books.dat"
+              ORGANIZATION IS LINE SEQUENTIAL.
+       DATA DIVISION.
+       FILE SECTION.
+       FD  BOOK-FILE.
+       01  BOOK-RECORD.
+           05 ISBN        PIC X(13).
+           05 TITLE       PIC X(40).
+           05 AUTHOR      PIC X(30).
+           05 AVAILABLE   PIC X(01).
+       WORKING-STORAGE SECTION.
+       01  WS-OPTION      PIC X VALUE SPACE.
+       01  WS-END         PIC X VALUE 'N'.
+       01  WS-ISBN        PIC X(13).
+       01  WS-TITLE       PIC X(40).
+       01  WS-AUTHOR      PIC X(30).
+       PROCEDURE DIVISION.""" ;
+    tw:kind "paragraph" ;
+    tw:name "FILE-CONTROL" .
+
+<http://example.org/train/codeblock/cobol/v1/ee8210da9702afcb1c2f705e652578031d006fee> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:code """       LIST-BOOKS.
+           OPEN INPUT BOOK-FILE
+           PERFORM UNTIL EOF
+               READ BOOK-FILE
+                   AT END EXIT PERFORM
+               END-READ
+               DISPLAY ISBN " - " TITLE " (" AUTHOR ")"
+           END-PERFORM
+           CLOSE BOOK-FILE.""" ;
+    tw:kind "paragraph" ;
+    tw:name "LIST-BOOKS" .
+
+<http://example.org/train/codeblock/cobol/v1/faa4559446ef3573d4010e09516c45e71b0c850d> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:code """       ADD-BOOK.
+           DISPLAY "ISBN: "
+           ACCEPT WS-ISBN
+           DISPLAY "TITLE: "
+           ACCEPT WS-TITLE
+           DISPLAY "AUTHOR: "
+           ACCEPT WS-AUTHOR
+           MOVE WS-ISBN TO ISBN
+           MOVE WS-TITLE TO TITLE
+           MOVE WS-AUTHOR TO AUTHOR
+           MOVE 'Y' TO AVAILABLE
+           OPEN EXTEND BOOK-FILE
+           WRITE BOOK-RECORD
+           CLOSE BOOK-FILE.
+""" ;
+    tw:kind "paragraph" ;
+    tw:name "ADD-BOOK" .
+
+<http://example.org/train/codeblock/cobol/v2/44ad54933643817a2fe0142889938f973c089e24> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v2/7b131521a1b27247f4d5f6b157c69028f91fdcfb> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v2> ;
+    tw:code """       SAMPLE-OPERATIONS.
+           MOVE '978-0-2000000' TO WS-ISBN.
+           MOVE 'Mainframe Patterns' TO WS-TITLE.
+           MOVE 'IBM Press' TO WS-AUTHOR.
+           MOVE 'Y' TO WS-AVAILABLE.
+           EXEC SQL
+               INSERT INTO LIB_BOOK (ISBN, TITLE, AUTHOR, AVAILABLE)
+               VALUES (:WS-ISBN, :WS-TITLE, :WS-AUTHOR, :WS-AVAILABLE)
+           END-EXEC.
+           DISPLAY "Inserted " WS-ISBN.
+
+           EXEC SQL
+               SELECT TITLE, AUTHOR, AVAILABLE
+               INTO :WS-TITLE, :WS-AUTHOR, :WS-AVAILABLE
+               FROM LIB_BOOK WHERE ISBN = :WS-ISBN
+           END-EXEC.
+           IF SQLCODE = 0 THEN
+               DISPLAY "Read " WS-TITLE
+           END-IF.
+
+           MOVE 'N' TO WS-AVAILABLE.
+           EXEC SQL
+               UPDATE LIB_BOOK
+               SET AVAILABLE = :WS-AVAILABLE
+               WHERE ISBN = :WS-ISBN
+           END-EXEC.
+           DISPLAY "Updated availability".
+
+           EXEC SQL
+               DELETE FROM LIB_BOOK WHERE ISBN = :WS-ISBN
+           END-EXEC.
+           DISPLAY "Deleted " WS-ISBN.
+""" ;
+    tw:kind "paragraph" ;
+    tw:name "SAMPLE-OPERATIONS" .
+
+<http://example.org/train/codeblock/cobol/v2/4e018c61c1c2e18fbef09fbfa330c83af36f5c4e> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v2/e786b0c00cc4a80160018a6640ba456260663288> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v2> ;
+    tw:code """Legacy COBOL program using embedded SQL for IBM DB2.
+Requires DB2 precompiler (DSNHPC) and catalog table LIB_BOOK with columns:
+  ISBN CHAR(13) PRIMARY KEY
+  TITLE VARCHAR(50)
+  AUTHOR VARCHAR(30)
+  AVAILABLE CHAR(1)
+Compile with Enterprise COBOL 4.x or compatible, enabling embedded SQL.""" ;
+    tw:kind "section" ;
+    tw:name "section-1" .
+
+<http://example.org/train/codeblock/cobol/v2/8dcc58f7434ea16bb57c637debdff26506acbad4> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v2/7b131521a1b27247f4d5f6b157c69028f91fdcfb> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v2> ;
+    tw:code """       DB-DISCONNECT.
+           EXEC SQL COMMIT END-EXEC.
+           EXEC SQL DISCONNECT CURRENT END-EXEC.""" ;
+    tw:kind "paragraph" ;
+    tw:name "DB-DISCONNECT" .
+
+<http://example.org/train/codeblock/cobol/v2/d954cf872da328213392375647c96e41b76313ef> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v2/7b131521a1b27247f4d5f6b157c69028f91fdcfb> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v2> ;
+    tw:code """       PROGRAM-ID. LIBRARY-DB2.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       EXEC SQL INCLUDE SQLCA END-EXEC.
+       01  WS-ISBN        PIC X(13).
+       01  WS-TITLE       PIC X(50).
+       01  WS-AUTHOR      PIC X(30).
+       01  WS-AVAILABLE   PIC X(01).
+       PROCEDURE DIVISION.
+           DISPLAY "COBOL + DB2 CRUD V2".
+           PERFORM DB-CONNECT.
+           PERFORM SAMPLE-OPERATIONS.
+           PERFORM DB-DISCONNECT.
+           STOP RUN.
+""" ;
+    tw:kind "paragraph" ;
+    tw:name "PROGRAM-ID" .
+
+<http://example.org/train/codeblock/cobol/v2/f17daf3adfc9e8bf2a1ad20bb49ea83d58a9595b> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/cobol/v2/7b131521a1b27247f4d5f6b157c69028f91fdcfb> ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v2> ;
+    tw:code """       DB-CONNECT.
+           EXEC SQL
+               CONNECT TO LEGACYDB
+           END-EXEC.
+           IF SQLCODE NOT = 0 THEN
+               DISPLAY "CONNECT FAILED" SQLCODE
+               STOP RUN
+           END-IF.
+""" ;
+    tw:kind "paragraph" ;
+    tw:name "DB-CONNECT" .
+
+<http://example.org/train/codeblock/delphi/v1/0da3d9ada0bed58651ebe9ccdffa23e3cb083d22> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """function TLibraryManager.FindBook(const AIsbn: string): TBook;
+var
+  I: Integer;
+  Book: TBook;
+begin
+  Result := nil;
+  for I := 0 to FBooks.Count - 1 do
+  begin
+    Book := TBook(FBooks[I]);
+    if SameText(Book.Isbn, AIsbn) then
+    begin
+      Result := Book;
+      Exit;
+    end;
+  end;
+end;""" ;
+    tw:kind "function" ;
+    tw:name "TLibraryManager.FindBook" .
+
+<http://example.org/train/codeblock/delphi/v1/185969ad4f449c4cd545c2806b689c457ec1b453> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """procedure TLibraryManager.UpdateTitle(const AIsbn, ATitle: string);
+var
+  Book: TBook;
+begin
+  Book := FindBook(AIsbn);
+  if Assigned(Book) then
+    Book.Title := ATitle;
+end;""" ;
+    tw:kind "procedure" ;
+    tw:name "TLibraryManager.UpdateTitle" .
+
+<http://example.org/train/codeblock/delphi/v1/1940abaa30f1d277ac38872790fb13a643d773b4> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """procedure TLibraryManager.ListBooks(AStrings: TStrings);
+var
+  I: Integer;
+  Book: TBook;
+begin
+  AStrings.Clear;
+  for I := 0 to FBooks.Count - 1 do
+  begin
+    Book := TBook(FBooks[I]);
+    AStrings.Add(Format('%s - %s (%s)', [Book.Isbn, Book.Title, Book.Author]));
+  end;
+end;""" ;
+    tw:kind "procedure" ;
+    tw:name "TLibraryManager.ListBooks" .
+
+<http://example.org/train/codeblock/delphi/v1/1c9973a8e8459c9295937991871d9169e55dba97> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """    constructor Create(const AIsbn, ATitle, AAuthor: string);
+    property Isbn: string read FIsbn;
+    property Title: string read FTitle write FTitle;
+    property Author: string read FAuthor write FAuthor;
+    property Available: Boolean read FAvailable write FAvailable;
+  end;""" ;
+    tw:kind "constructor" ;
+    tw:name "Create" .
+
+<http://example.org/train/codeblock/delphi/v1/4b27c549944be3e635b1db7a26d237b030ca3612> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """constructor TBook.Create(const AIsbn, ATitle, AAuthor: string);
+begin
+  inherited Create;
+  FIsbn := AIsbn;
+  FTitle := ATitle;
+  FAuthor := AAuthor;
+  FAvailable := True;
+end;""" ;
+    tw:kind "constructor" ;
+    tw:name "TBook.Create" .
+
+<http://example.org/train/codeblock/delphi/v1/660191a299ffc0a932368f298ba0b5c03fe63b69> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """destructor TLibraryManager.Destroy;
+var
+  I: Integer;
+begin
+  for I := 0 to FBooks.Count - 1 do
+    TObject(FBooks[I]).Free;
+  FBooks.Free;
+  inherited Destroy;
+end;""" ;
+    tw:kind "destructor" ;
+    tw:name "TLibraryManager.Destroy" .
+
+<http://example.org/train/codeblock/delphi/v1/8f12e0af4d546b7e99c90ce5dba061c457e08557> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """function TLibraryManager.GetBook(const AIsbn: string): TBook;
+begin
+  Result := FindBook(AIsbn);
+end;""" ;
+    tw:kind "function" ;
+    tw:name "TLibraryManager.GetBook" .
+
+<http://example.org/train/codeblock/delphi/v1/cc51233d16deb58859aed1c4d728f383b4ec8db5> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """    function FindBook(const AIsbn: string): TBook;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure AddBook(const AIsbn, ATitle, AAuthor: string);
+    function GetBook(const AIsbn: string): TBook;
+    procedure UpdateTitle(const AIsbn, ATitle: string);
+    procedure RemoveBook(const AIsbn: string);
+    procedure ListBooks(AStrings: TStrings);
+  end;""" ;
+    tw:kind "function" ;
+    tw:name "FindBook" .
+
+<http://example.org/train/codeblock/delphi/v1/d9fdd1aa9b0fa2dc657d93b4eccd9fab4c8009cf> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """procedure TLibraryManager.RemoveBook(const AIsbn: string);
+var
+  Book: TBook;
+begin
+  Book := FindBook(AIsbn);
+  if Assigned(Book) then
+  begin
+    FBooks.Remove(Book);
+    Book.Free;
+  end;
+end;""" ;
+    tw:kind "procedure" ;
+    tw:name "TLibraryManager.RemoveBook" .
+
+<http://example.org/train/codeblock/delphi/v1/db5d557ab97a2a8a9aa4a81bdebb1e48a5decbe1> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """procedure TLibraryManager.AddBook(const AIsbn, ATitle, AAuthor: string);
+begin
+  FBooks.Add(TBook.Create(AIsbn, ATitle, AAuthor));
+end;""" ;
+    tw:kind "procedure" ;
+    tw:name "TLibraryManager.AddBook" .
+
+<http://example.org/train/codeblock/delphi/v1/e965a5a9fc7b053aff2576d0a2935e52f116627f> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """constructor TLibraryManager.Create;
+begin
+  inherited Create;
+  FBooks := TList.Create;
+end;""" ;
+    tw:kind "constructor" ;
+    tw:name "TLibraryManager.Create" .
+
+<http://example.org/train/codeblock/delphi/v2/0eec845d2852e526779d316ee9f36208c36b21df> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v2/2e74b056220a3e7926e657f467cc045e108b08fc> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """procedure TdmLibrary.DeleteBook(const AIsbn: string);
+begin
+  if FindBook(AIsbn) then
+    TableBooks.Delete;
+end;""" ;
+    tw:kind "procedure" ;
+    tw:name "TdmLibrary.DeleteBook" .
+
+<http://example.org/train/codeblock/delphi/v2/4becae9049adf7b9607976807d61323da9a67ac3> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v2/763131a907f0c261446acb2c72bdbb2f103a23ff> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """object dmLibrary: TdmLibrary
+  OldCreateOrder = False
+  Height = 240
+  Width = 320
+  object Connection: TADOConnection
+    LoginPrompt = False
+    Left = 24
+    Top = 24
+  end
+  object TableBooks: TADOTable
+    Connection = Connection
+    CursorType = ctStatic
+    TableName = 'LIB_BOOK'
+    Left = 120
+    Top = 24
+  end
+end""" ;
+    tw:kind "section" ;
+    tw:name "section-1" .
+
+<http://example.org/train/codeblock/delphi/v2/7d01dd07344408a8391e428f1e12742dd1bade76> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v2/ea344c40cb6bf4ed611e9bd2729cfb686cfe65c5> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """Delphi 7 style data module using ADO components for CRUD operations.
+Requirements:
+- Microsoft Jet OLEDB 4.0 provider
+- Table LIB_BOOK in Access (library.mdb) with fields: ISBN (Text), TITLE (Text), AUTHOR (Text), AVAILABLE (Yes/No)
+Open project in Delphi 7 or RAD Studio 2007 and include LibraryDataModule.pas/dfm in the project.""" ;
+    tw:kind "section" ;
+    tw:name "section-1" .
+
+<http://example.org/train/codeblock/delphi/v2/8dff360e806f4842ef51e918d015aef3ae966ac3> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v2/2e74b056220a3e7926e657f467cc045e108b08fc> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """procedure TdmLibrary.UpdateAvailability(const AIsbn: string; AAvailable: Boolean);
+begin
+  if FindBook(AIsbn) then
+  begin
+    TableBooks.Edit;
+    TableBooks.FieldByName('AVAILABLE').AsBoolean := AAvailable;
+    TableBooks.Post;
+  end;
+end;""" ;
+    tw:kind "procedure" ;
+    tw:name "TdmLibrary.UpdateAvailability" .
+
+<http://example.org/train/codeblock/delphi/v2/95f2613a2e9956396c139cd47263dfb6e94280dd> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v2/2e74b056220a3e7926e657f467cc045e108b08fc> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """    procedure SetupConnection;
+    procedure CreateBook(const AIsbn, ATitle, AAuthor: string);
+    function FindBook(const AIsbn: string): Boolean;
+    procedure UpdateAvailability(const AIsbn: string; AAvailable: Boolean);
+    procedure DeleteBook(const AIsbn: string);
+  end;""" ;
+    tw:kind "procedure" ;
+    tw:name "SetupConnection" .
+
+<http://example.org/train/codeblock/delphi/v2/a87e22a68b7868133d02c6261d5e5c7be084f521> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v2/2e74b056220a3e7926e657f467cc045e108b08fc> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """function TdmLibrary.FindBook(const AIsbn: string): Boolean;
+begin
+  Result := TableBooks.Locate('ISBN', AIsbn, []);
+end;""" ;
+    tw:kind "function" ;
+    tw:name "TdmLibrary.FindBook" .
+
+<http://example.org/train/codeblock/delphi/v2/da0c845fbee6d61d9cd1d4b932976cadcd836568> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v2/2e74b056220a3e7926e657f467cc045e108b08fc> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """procedure TdmLibrary.CreateBook(const AIsbn, ATitle, AAuthor: string);
+begin
+  TableBooks.Insert;
+  TableBooks.FieldByName('ISBN').AsString := AIsbn;
+  TableBooks.FieldByName('TITLE').AsString := ATitle;
+  TableBooks.FieldByName('AUTHOR').AsString := AAuthor;
+  TableBooks.FieldByName('AVAILABLE').AsBoolean := True;
+  TableBooks.Post;
+end;""" ;
+    tw:kind "procedure" ;
+    tw:name "TdmLibrary.CreateBook" .
+
+<http://example.org/train/codeblock/delphi/v2/fa5e2da0eac503441d07120c4b6a0d8716216dcb> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/delphi/v2/2e74b056220a3e7926e657f467cc045e108b08fc> ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """procedure TdmLibrary.SetupConnection;
+begin
+  Connection.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=library.mdb;Persist Security Info=False;';
+  Connection.LoginPrompt := False;
+  Connection.Open;
+  TableBooks.Connection := Connection;
+  TableBooks.TableName := 'LIB_BOOK';
+  TableBooks.Open;
+end;""" ;
+    tw:kind "procedure" ;
+    tw:name "TdmLibrary.SetupConnection" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/001c1a0e91713e128685930c6ffdf21afc520118> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/e8b5bef75d87ab26f69eaac23e90e17f70a38703> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """    private UnivariateSamples() {
+    }""" ;
+    tw:kind "method" ;
+    tw:name "UnivariateSamples" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/0306e0ead4639c318062cd00aa967316cdbc0210> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/20ed9762f67daa179fc810b4729453dabb543a6c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """    private Application() {
+    }""" ;
+    tw:kind "method" ;
+    tw:name "Application" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/09a4b398742173455322f1c210009c0226b7877d> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/f8222a30da6178274e407f6c49fc621a6fa42872> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """    private SampleFunctions() {
+    }""" ;
+    tw:kind "method" ;
+    tw:name "SampleFunctions" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/0ac31346ad93729a7c3502d11fa657c545a04a2a> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/89cf3a3022c10a95916849f12c7c309685b0390c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double power(double base, double exponent) {
+        return Math.pow(base, exponent);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "power" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/124b2925a3f92660f364cc8f756da9bdf63dde09> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/a5a2cf9604f290e26eeb5864fe8626cd425ae0a6> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double simpson(UnivariateFunction function, double start, double end, int steps) {
+        if (steps <= 0 || steps % 2 != 0) {
+            throw new IllegalArgumentException("Simpson's rule requires a positive even number of steps");
+        }
+        validate(function, steps);
+        double h = (end - start) / steps;
+        double sum = function.evaluate(start) + function.evaluate(end);
+        for (int i = 1; i < steps; i++) {
+            double x = start + i * h;
+            sum += (i % 2 == 0 ? 2.0 : 4.0) * function.evaluate(x);
+        }
+        return sum * h / 3.0;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "simpson" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/28e7eb69c43bc1e6f04652ee84545d1797cf03bb> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/a025987bd9c40cc2ddb90395c4f6dc64ee727744> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """package com.example.derivcalc;
+
+/**
+ * Represents a differentiable multivariate function f(x_0, x_1, ..., x_n).
+ */
+@FunctionalInterface
+public interface MultivariateFunction {
+    /**
+     * Evaluates the function at the provided point.
+     *
+     * @param point array containing the coordinate of each variable
+     * @return function value at that point
+     */
+    double evaluate(double[] point);
+}
+""" ;
+    tw:kind "file" ;
+    tw:name "file" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/297e4bf2d937ba7b161a7cc9184e13675db34127> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/a5a2cf9604f290e26eeb5864fe8626cd425ae0a6> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    private void validate(UnivariateFunction function, int steps) {
+        if (function == null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        if (steps <= 0) {
+            throw new IllegalArgumentException("Integration steps must be positive");
+        }
+    }""" ;
+    tw:kind "method" ;
+    tw:name "validate" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/2c4f74721404d4e1e1c55ca83bcc9cda7e5c3e30> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/20ed9762f67daa179fc810b4729453dabb543a6c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """public final class Application {
+    private Application() {
+    }
+
+    public static void main(String[] args) {
+        FiniteDifferencePartialDerivativeCalculator partial = new FiniteDifferencePartialDerivativeCalculator(1e-4);
+        GradientCalculator gradientCalculator = new GradientCalculator(partial);
+        SingleVariableDerivativeCalculator singleDerivative = new SingleVariableDerivativeCalculator(1e-4);
+        NumericalIntegralCalculator integralCalculator = new NumericalIntegralCalculator(1000);
+        BasicArithmeticCalculator arithmeticCalculator = new BasicArithmeticCalculator();
+
+        MultivariateFunction function = SampleFunctions.quadraticSurface();
+        double[] point = {1.5, -0.8};
+
+        System.out.printf("Forward difference wrt x: %.6f%n",
+                partial.forwardDifference(function, point, 0));
+        System.out.printf("Central difference wrt y: %.6f%n",
+                partial.centralDifference(function, point, 1));
+
+        double[] gradient = gradientCalculator.gradient(function, point);
+        System.out.println("Gradient: " + Arrays.toString(gradient));
+
+        UnivariateFunction cubic = UnivariateSamples.cubicPolynomial();
+        double x0 = 1.2;
+        System.out.printf("Single-variable derivative f'(%.2f): %.6f%n",
+            x0,
+            singleDerivative.centralDifference(cubic, x0));
+
+        double area = integralCalculator.simpson(UnivariateSamples.sineWave(), 0.0, Math.PI);
+        System.out.printf("Integral of sin(x) from 0 to pi: %.6f%n", area);
+
+        double sum = arithmeticCalculator.add(12.5, 7.4);
+        double power = arithmeticCalculator.power(3.0, 4.0);
+        double root = arithmeticCalculator.root(81.0, 2.0);
+        System.out.printf("Sum: %.2f, Power: %.2f, Root: %.2f%n", sum, power, root);
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "Application" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/2d16a3f648a6ada67ec335071d6fa10f9b7e626c> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/9fb701b3a20479f95ec687dde854ec1634114519> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double centralDifference(UnivariateFunction function, double point) {
+        return centralDifference(function, point, defaultStep);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "centralDifference" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/30bc6e1d2303e725945633f9567441ffd4749842> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/89cf3a3022c10a95916849f12c7c309685b0390c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """    public double add(double a, double b) {
+        return a + b;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "add" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/3547892df6e683ce4d358a5d831a0b27191ed4f4> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/359c63bca73755e211d75a1eb5e86b0f1d8c732e> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """Highlights:
+- Partial derivative estimator with forward and central schemes.
+- Gradient calculator built on top of the partial derivative component.
+- Single-variable derivative calculator using finite differences.
+- Numerical integration with trapezoidal and Simpson's rule implementations.
+- Basic arithmetic utility supporting add, subtract, multiply, divide, power, and roots.
+- Sample univariate and multivariate functions for experimentation.
+- CLI entry point showcasing all operations.""" ;
+    tw:kind "section" ;
+    tw:name "section-2" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/368e9cf311cc2a60ed9b867455360750c30491c8> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/89cf3a3022c10a95916849f12c7c309685b0390c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double subtract(double a, double b) {
+        return a - b;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "subtract" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/3a471b2e46d552fe7ad32595d7d9a5175115f851> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/5a2d3c048caa65c9b2d4decfcba7d489b55ca761> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """public final class GradientCalculator {
+    private final FiniteDifferencePartialDerivativeCalculator partialDerivativeCalculator;
+
+    public GradientCalculator(FiniteDifferencePartialDerivativeCalculator partialDerivativeCalculator) {
+        this.partialDerivativeCalculator = Objects.requireNonNull(partialDerivativeCalculator);
+    }
+
+    public double[] gradient(MultivariateFunction function, double[] point) {
+        Objects.requireNonNull(function, "function");
+        Objects.requireNonNull(point, "point");
+        double[] gradient = new double[point.length];
+        for (int i = 0; i < point.length; i++) {
+            gradient[i] = partialDerivativeCalculator.centralDifference(function, point, i);
+        }
+        return gradient;
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "GradientCalculator" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/3a8727061eb9d859dd4059bf1549ec3d1dc04a4a> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/5a2d3c048caa65c9b2d4decfcba7d489b55ca761> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public GradientCalculator(FiniteDifferencePartialDerivativeCalculator partialDerivativeCalculator) {
+        this.partialDerivativeCalculator = Objects.requireNonNull(partialDerivativeCalculator);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "GradientCalculator" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/4398f783ddbecd2cef0953d518f2808a6010b5db> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/e8b5bef75d87ab26f69eaac23e90e17f70a38703> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public static UnivariateFunction cubicPolynomial() {
+        return x -> 0.5 * x * x * x - 3.0 * x * x + 2.0 * x - 1.0;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "cubicPolynomial" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/55948b647eed98116c9dd29d3b5bb4e23fdf8192> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/8c17e67869977921181f70c1ee344df8f338da1b> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """public final class FiniteDifferencePartialDerivativeCalculator {
+    private final double defaultStep;
+
+    /**
+     * Creates a calculator with the provided default step size.
+     *
+     * @param defaultStep step size used when none is specified for a call
+     */
+    public FiniteDifferencePartialDerivativeCalculator(double defaultStep) {
+        if (defaultStep <= 0.0) {
+            throw new IllegalArgumentException("Step size must be positive");
+        }
+        this.defaultStep = defaultStep;
+    }
+
+    /**
+     * Computes the partial derivative using a forward difference scheme.
+     */
+    public double forwardDifference(MultivariateFunction function, double[] point, int variableIndex) {
+        return forwardDifference(function, point, variableIndex, defaultStep);
+    }
+
+    /**
+     * Computes the partial derivative using a central difference scheme.
+     */
+    public double centralDifference(MultivariateFunction function, double[] point, int variableIndex) {
+        return centralDifference(function, point, variableIndex, defaultStep);
+    }
+
+    public double forwardDifference(MultivariateFunction function, double[] point, int variableIndex, double step) {
+        validateInputs(function, point, variableIndex, step);
+        double[] shifted = Arrays.copyOf(point, point.length);
+        shifted[variableIndex] += step;
+        double fxStep = function.evaluate(shifted);
+        double fx = function.evaluate(point);
+        return (fxStep - fx) / step;
+    }
+
+    public double centralDifference(MultivariateFunction function, double[] point, int variableIndex, double step) {
+        validateInputs(function, point, variableIndex, step);
+        double[] forward = Arrays.copyOf(point, point.length);
+        double[] backward = Arrays.copyOf(point, point.length);
+        forward[variableIndex] += step;
+        backward[variableIndex] -= step;
+        double fxForward = function.evaluate(forward);
+        double fxBackward = function.evaluate(backward);
+        return (fxForward - fxBackward) / (2.0 * step);
+    }
+
+    private void validateInputs(MultivariateFunction function, double[] point, int variableIndex, double step) {
+        if (function == null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        if (point == null) {
+            throw new IllegalArgumentException("Point must not be null");
+        }
+        if (variableIndex < 0 || variableIndex >= point.length) {
+            throw new IllegalArgumentException("Variable index out of bounds");
+        }
+        if (step <= 0.0) {
+            throw new IllegalArgumentException("Step size must be positive");
+        }
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "FiniteDifferencePartialDerivativeCalculator" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/5abb1c010f260b874c445415ed1c6a96cb1dc83c> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/a5a2cf9604f290e26eeb5864fe8626cd425ae0a6> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double trapezoidal(UnivariateFunction function, double start, double end, int steps) {
+        validate(function, steps);
+        double h = (end - start) / steps;
+        double sum = 0.5 * (function.evaluate(start) + function.evaluate(end));
+        for (int i = 1; i < steps; i++) {
+            double x = start + i * h;
+            sum += function.evaluate(x);
+        }
+        return sum * h;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "trapezoidal" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/5bea6b1320b56fa414bdd346973943c9c07ec689> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/8c17e67869977921181f70c1ee344df8f338da1b> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double forwardDifference(MultivariateFunction function, double[] point, int variableIndex, double step) {
+        validateInputs(function, point, variableIndex, step);
+        double[] shifted = Arrays.copyOf(point, point.length);
+        shifted[variableIndex] += step;
+        double fxStep = function.evaluate(shifted);
+        double fx = function.evaluate(point);
+        return (fxStep - fx) / step;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "forwardDifference" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/5d71e0d76ad0c05fcebfaf270093d890b7105b4f> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/8c17e67869977921181f70c1ee344df8f338da1b> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double centralDifference(MultivariateFunction function, double[] point, int variableIndex, double step) {
+        validateInputs(function, point, variableIndex, step);
+        double[] forward = Arrays.copyOf(point, point.length);
+        double[] backward = Arrays.copyOf(point, point.length);
+        forward[variableIndex] += step;
+        backward[variableIndex] -= step;
+        double fxForward = function.evaluate(forward);
+        double fxBackward = function.evaluate(backward);
+        return (fxForward - fxBackward) / (2.0 * step);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "centralDifference" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/5e94ef54aa4b46156f552412710729ae75b7f7c1> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/5a2d3c048caa65c9b2d4decfcba7d489b55ca761> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double[] gradient(MultivariateFunction function, double[] point) {
+        Objects.requireNonNull(function, "function");
+        Objects.requireNonNull(point, "point");
+        double[] gradient = new double[point.length];
+        for (int i = 0; i < point.length; i++) {
+            gradient[i] = partialDerivativeCalculator.centralDifference(function, point, i);
+        }
+        return gradient;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "gradient" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/63d14d88400a72e15e741474322b857373fa69ba> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/9fb701b3a20479f95ec687dde854ec1634114519> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public SingleVariableDerivativeCalculator(double defaultStep) {
+        if (defaultStep <= 0.0) {
+            throw new IllegalArgumentException("Step size must be positive");
+        }
+        this.defaultStep = defaultStep;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "SingleVariableDerivativeCalculator" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/71c7e2be0fbac476c317dbe765f62fd2ae8b5b95> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/359c63bca73755e211d75a1eb5e86b0f1d8c732e> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code "Partial derivative and calculus utilities implemented in Java." ;
+    tw:kind "section" ;
+    tw:name "section-1" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/7d1090363dc3f9574707e05995e71b1c12f98ba1> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/f8222a30da6178274e407f6c49fc621a6fa42872> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public static MultivariateFunction quadraticSurface() {
+        return point -> {
+            double x = point[0];
+            double y = point[1];
+            return 4.0 * x * x + 3.0 * x * y + 2.0 * y * y;
+        };
+    }""" ;
+    tw:kind "method" ;
+    tw:name "quadraticSurface" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/82b4158e29d8715aa3751e984ac0b0d204fcfac8> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/8c17e67869977921181f70c1ee344df8f338da1b> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """    public FiniteDifferencePartialDerivativeCalculator(double defaultStep) {
+        if (defaultStep <= 0.0) {
+            throw new IllegalArgumentException("Step size must be positive");
+        }
+        this.defaultStep = defaultStep;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "FiniteDifferencePartialDerivativeCalculator" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/8c6a2b1fd3089883c21fc13a97b804521446d48a> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/f8222a30da6178274e407f6c49fc621a6fa42872> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """public final class SampleFunctions {
+    private SampleFunctions() {
+    }
+
+    public static MultivariateFunction quadraticSurface() {
+        return point -> {
+            double x = point[0];
+            double y = point[1];
+            return 4.0 * x * x + 3.0 * x * y + 2.0 * y * y;
+        };
+    }
+
+    public static MultivariateFunction trigonometricWave() {
+        return point -> {
+            double x = point[0];
+            double y = point[1];
+            double z = point.length > 2 ? point[2] : 0.0;
+            return Math.sin(x) * Math.cos(y) + Math.exp(-z);
+        };
+    }
+
+    public static MultivariateFunction logisticRidge() {
+        return point -> {
+            double x = point[0];
+            double y = point[1];
+            return 1.0 / (1.0 + Math.exp(-(x - 2.0 * y)));
+        };
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "SampleFunctions" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/8e36c9c5e354471a491fbc22ceacc239ad2f37cd> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/a5a2cf9604f290e26eeb5864fe8626cd425ae0a6> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double trapezoidal(UnivariateFunction function, double start, double end) {
+        return trapezoidal(function, start, end, defaultSteps);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "trapezoidal" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/8f78f6a29e38b88ba8f3f6c127ad4b8ed0e1e9bf> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/89cf3a3022c10a95916849f12c7c309685b0390c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double root(double value, double degree) {
+        if (degree == 0.0) {
+            throw new ArithmeticException("Root degree cannot be zero");
+        }
+        if (value < 0.0 && degree % 2.0 == 0.0) {
+            throw new ArithmeticException("Even-degree root of a negative number is not real");
+        }
+        return Math.pow(value, 1.0 / degree);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "root" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/92085ae0a79072f860fbb7b901d59ef871cfdffa> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/8c17e67869977921181f70c1ee344df8f338da1b> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    private void validateInputs(MultivariateFunction function, double[] point, int variableIndex, double step) {
+        if (function == null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        if (point == null) {
+            throw new IllegalArgumentException("Point must not be null");
+        }
+        if (variableIndex < 0 || variableIndex >= point.length) {
+            throw new IllegalArgumentException("Variable index out of bounds");
+        }
+        if (step <= 0.0) {
+            throw new IllegalArgumentException("Step size must be positive");
+        }
+    }""" ;
+    tw:kind "method" ;
+    tw:name "validateInputs" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/9a5de8db22e2f4dcae153f22e3989f954f3cc1be> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/8c17e67869977921181f70c1ee344df8f338da1b> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """    public double forwardDifference(MultivariateFunction function, double[] point, int variableIndex) {
+        return forwardDifference(function, point, variableIndex, defaultStep);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "forwardDifference" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/a5f3c4998fd96803acd368d052b14f99e4533e96> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/9fb701b3a20479f95ec687dde854ec1634114519> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double forwardDifference(UnivariateFunction function, double point) {
+        return forwardDifference(function, point, defaultStep);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "forwardDifference" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/a8dd689f010707887242124fb938c4c7d7e490ff> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/20ed9762f67daa179fc810b4729453dabb543a6c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public static void main(String[] args) {
+        FiniteDifferencePartialDerivativeCalculator partial = new FiniteDifferencePartialDerivativeCalculator(1e-4);
+        GradientCalculator gradientCalculator = new GradientCalculator(partial);
+        SingleVariableDerivativeCalculator singleDerivative = new SingleVariableDerivativeCalculator(1e-4);
+        NumericalIntegralCalculator integralCalculator = new NumericalIntegralCalculator(1000);
+        BasicArithmeticCalculator arithmeticCalculator = new BasicArithmeticCalculator();
+
+        MultivariateFunction function = SampleFunctions.quadraticSurface();
+        double[] point = {1.5, -0.8};
+
+        System.out.printf("Forward difference wrt x: %.6f%n",
+                partial.forwardDifference(function, point, 0));
+        System.out.printf("Central difference wrt y: %.6f%n",
+                partial.centralDifference(function, point, 1));
+
+        double[] gradient = gradientCalculator.gradient(function, point);
+        System.out.println("Gradient: " + Arrays.toString(gradient));
+
+        UnivariateFunction cubic = UnivariateSamples.cubicPolynomial();
+        double x0 = 1.2;
+        System.out.printf("Single-variable derivative f'(%.2f): %.6f%n",
+            x0,
+            singleDerivative.centralDifference(cubic, x0));
+
+        double area = integralCalculator.simpson(UnivariateSamples.sineWave(), 0.0, Math.PI);
+        System.out.printf("Integral of sin(x) from 0 to pi: %.6f%n", area);
+
+        double sum = arithmeticCalculator.add(12.5, 7.4);
+        double power = arithmeticCalculator.power(3.0, 4.0);
+        double root = arithmeticCalculator.root(81.0, 2.0);
+        System.out.printf("Sum: %.2f, Power: %.2f, Root: %.2f%n", sum, power, root);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "main" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/aa606813c68202fd5e9a1a5d9482e709921f8cac> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/a5a2cf9604f290e26eeb5864fe8626cd425ae0a6> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double simpson(UnivariateFunction function, double start, double end) {
+        int steps = defaultSteps % 2 == 0 ? defaultSteps : defaultSteps + 1;
+        return simpson(function, start, end, steps);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "simpson" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/b36ba8cd218ffff2bf4db70ec373301119eb4da8> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/a5a2cf9604f290e26eeb5864fe8626cd425ae0a6> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """public final class NumericalIntegralCalculator {
+    private final int defaultSteps;
+
+    public NumericalIntegralCalculator(int defaultSteps) {
+        if (defaultSteps <= 0) {
+            throw new IllegalArgumentException("Integration steps must be positive");
+        }
+        this.defaultSteps = defaultSteps;
+    }
+
+    public double trapezoidal(UnivariateFunction function, double start, double end) {
+        return trapezoidal(function, start, end, defaultSteps);
+    }
+
+    public double simpson(UnivariateFunction function, double start, double end) {
+        int steps = defaultSteps % 2 == 0 ? defaultSteps : defaultSteps + 1;
+        return simpson(function, start, end, steps);
+    }
+
+    public double trapezoidal(UnivariateFunction function, double start, double end, int steps) {
+        validate(function, steps);
+        double h = (end - start) / steps;
+        double sum = 0.5 * (function.evaluate(start) + function.evaluate(end));
+        for (int i = 1; i < steps; i++) {
+            double x = start + i * h;
+            sum += function.evaluate(x);
+        }
+        return sum * h;
+    }
+
+    public double simpson(UnivariateFunction function, double start, double end, int steps) {
+        if (steps <= 0 || steps % 2 != 0) {
+            throw new IllegalArgumentException("Simpson's rule requires a positive even number of steps");
+        }
+        validate(function, steps);
+        double h = (end - start) / steps;
+        double sum = function.evaluate(start) + function.evaluate(end);
+        for (int i = 1; i < steps; i++) {
+            double x = start + i * h;
+            sum += (i % 2 == 0 ? 2.0 : 4.0) * function.evaluate(x);
+        }
+        return sum * h / 3.0;
+    }
+
+    private void validate(UnivariateFunction function, int steps) {
+        if (function == null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        if (steps <= 0) {
+            throw new IllegalArgumentException("Integration steps must be positive");
+        }
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "NumericalIntegralCalculator" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/b395ca6b0724acb33e290d84dcc30c1c2533aafa> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/89cf3a3022c10a95916849f12c7c309685b0390c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double divide(double a, double b) {
+        if (b == 0.0) {
+            throw new ArithmeticException("Division by zero");
+        }
+        return a / b;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "divide" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/be76292586bb413de4f2e1e8df744c725f6d2381> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/89cf3a3022c10a95916849f12c7c309685b0390c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """public final class BasicArithmeticCalculator {
+    public double add(double a, double b) {
+        return a + b;
+    }
+
+    public double subtract(double a, double b) {
+        return a - b;
+    }
+
+    public double multiply(double a, double b) {
+        return a * b;
+    }
+
+    public double divide(double a, double b) {
+        if (b == 0.0) {
+            throw new ArithmeticException("Division by zero");
+        }
+        return a / b;
+    }
+
+    public double power(double base, double exponent) {
+        return Math.pow(base, exponent);
+    }
+
+    public double root(double value, double degree) {
+        if (degree == 0.0) {
+            throw new ArithmeticException("Root degree cannot be zero");
+        }
+        if (value < 0.0 && degree % 2.0 == 0.0) {
+            throw new ArithmeticException("Even-degree root of a negative number is not real");
+        }
+        return Math.pow(value, 1.0 / degree);
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "BasicArithmeticCalculator" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/c7305d70a8bec8841dd2bca9b43e4e639ba65368> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/8c17e67869977921181f70c1ee344df8f338da1b> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """    public double centralDifference(MultivariateFunction function, double[] point, int variableIndex) {
+        return centralDifference(function, point, variableIndex, defaultStep);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "centralDifference" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/cbcfde99cb1d9e2710535c63be9114a97496c827> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/a5a2cf9604f290e26eeb5864fe8626cd425ae0a6> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public NumericalIntegralCalculator(int defaultSteps) {
+        if (defaultSteps <= 0) {
+            throw new IllegalArgumentException("Integration steps must be positive");
+        }
+        this.defaultSteps = defaultSteps;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "NumericalIntegralCalculator" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/d10b4c09363fb284e23cadc22abe90a23cd9446d> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/9fb701b3a20479f95ec687dde854ec1634114519> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """public final class SingleVariableDerivativeCalculator {
+    private final double defaultStep;
+
+    public SingleVariableDerivativeCalculator(double defaultStep) {
+        if (defaultStep <= 0.0) {
+            throw new IllegalArgumentException("Step size must be positive");
+        }
+        this.defaultStep = defaultStep;
+    }
+
+    public double forwardDifference(UnivariateFunction function, double point) {
+        return forwardDifference(function, point, defaultStep);
+    }
+
+    public double centralDifference(UnivariateFunction function, double point) {
+        return centralDifference(function, point, defaultStep);
+    }
+
+    public double forwardDifference(UnivariateFunction function, double point, double step) {
+        validate(function, step);
+        double fx = function.evaluate(point);
+        double fxStep = function.evaluate(point + step);
+        return (fxStep - fx) / step;
+    }
+
+    public double centralDifference(UnivariateFunction function, double point, double step) {
+        validate(function, step);
+        double fxForward = function.evaluate(point + step);
+        double fxBackward = function.evaluate(point - step);
+        return (fxForward - fxBackward) / (2.0 * step);
+    }
+
+    private void validate(UnivariateFunction function, double step) {
+        if (function == null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        if (step <= 0.0) {
+            throw new IllegalArgumentException("Step size must be positive");
+        }
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "SingleVariableDerivativeCalculator" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/d31e0a151fe74ba068ab83c1c78f6ded1989a9e7> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/f8222a30da6178274e407f6c49fc621a6fa42872> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public static MultivariateFunction logisticRidge() {
+        return point -> {
+            double x = point[0];
+            double y = point[1];
+            return 1.0 / (1.0 + Math.exp(-(x - 2.0 * y)));
+        };
+    }""" ;
+    tw:kind "method" ;
+    tw:name "logisticRidge" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/d7c5b64b7e888c18d21fa400b26b6376672809a3> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/e8b5bef75d87ab26f69eaac23e90e17f70a38703> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public static UnivariateFunction exponentialDecay() {
+        return x -> Math.exp(-x);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "exponentialDecay" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/dd0ec59134d953d599abb968eec87444b5676a06> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/bc52c00971b7feda69bee8a42f18341316fe2019> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """package com.example.derivcalc;
+
+/**
+ * Represents a differentiable single-variable function f(x).
+ */
+@FunctionalInterface
+public interface UnivariateFunction {
+    double evaluate(double x);
+}
+""" ;
+    tw:kind "file" ;
+    tw:name "file" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/dd5442b29088dd908f5636f8d8235fee6d862aed> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/9fb701b3a20479f95ec687dde854ec1634114519> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double forwardDifference(UnivariateFunction function, double point, double step) {
+        validate(function, step);
+        double fx = function.evaluate(point);
+        double fxStep = function.evaluate(point + step);
+        return (fxStep - fx) / step;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "forwardDifference" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/de29f269c63156311ec4b5e49fa88c328128705e> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/9fb701b3a20479f95ec687dde854ec1634114519> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    private void validate(UnivariateFunction function, double step) {
+        if (function == null) {
+            throw new IllegalArgumentException("Function must not be null");
+        }
+        if (step <= 0.0) {
+            throw new IllegalArgumentException("Step size must be positive");
+        }
+    }""" ;
+    tw:kind "method" ;
+    tw:name "validate" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/e57e12ed500a2374b56225b772032d7e8568585d> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/e8b5bef75d87ab26f69eaac23e90e17f70a38703> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public static UnivariateFunction sineWave() {
+        return Math::sin;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "sineWave" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/ed4aeb171e73fe7e6d9fea0fb738c9b82ad862ff> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/e8b5bef75d87ab26f69eaac23e90e17f70a38703> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """public final class UnivariateSamples {
+    private UnivariateSamples() {
+    }
+
+    public static UnivariateFunction cubicPolynomial() {
+        return x -> 0.5 * x * x * x - 3.0 * x * x + 2.0 * x - 1.0;
+    }
+
+    public static UnivariateFunction sineWave() {
+        return Math::sin;
+    }
+
+    public static UnivariateFunction exponentialDecay() {
+        return x -> Math.exp(-x);
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "UnivariateSamples" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/fbc2bf1044864b09311d1fc854419dd841db2d72> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/f8222a30da6178274e407f6c49fc621a6fa42872> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public static MultivariateFunction trigonometricWave() {
+        return point -> {
+            double x = point[0];
+            double y = point[1];
+            double z = point.length > 2 ? point[2] : 0.0;
+            return Math.sin(x) * Math.cos(y) + Math.exp(-z);
+        };
+    }""" ;
+    tw:kind "method" ;
+    tw:name "trigonometricWave" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/fd5bb29d32d3981393aac6455beff6af2da29510> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/89cf3a3022c10a95916849f12c7c309685b0390c> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double multiply(double a, double b) {
+        return a * b;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "multiply" .
+
+<http://example.org/train/codeblock/java-derivatives/v1/fea560dbb02ac3abdc37526b799d6a1ed7463cbe> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java-derivatives/v1/9fb701b3a20479f95ec687dde854ec1634114519> ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:code """
+    public double centralDifference(UnivariateFunction function, double point, double step) {
+        validate(function, step);
+        double fxForward = function.evaluate(point + step);
+        double fxBackward = function.evaluate(point - step);
+        return (fxForward - fxBackward) / (2.0 * step);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "centralDifference" .
+
+<http://example.org/train/codeblock/java6/v1/013ca1c27a35652a66cf488c9003b95ae5429ad8> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+class Book {
+    private String isbn;
+    private String title;
+    private String author;
+
+    public Book(String isbn, String title, String author) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String toString() {
+        return isbn + " - " + title + " (" + author + ")";
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "Book" .
+
+<http://example.org/train/codeblock/java6/v1/043de3167cbaa6d3fc0cf2bb40bafc8818e6ba3b> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public String getAuthor() {
+        return author;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getAuthor" .
+
+<http://example.org/train/codeblock/java6/v1/26df152ba8b8d4eecea4087bb1e122e2d824f479> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public String getIsbn() {
+        return isbn;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getIsbn" .
+
+<http://example.org/train/codeblock/java6/v1/4f6f322009aa34e8bed0d1154660b777f2499f37> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public void createBook(String isbn, String title, String author) {
+        Book book = new Book(isbn, title, author);
+        catalog.add(book);
+        System.out.println("Created book: " + book);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "createBook" .
+
+<http://example.org/train/codeblock/java6/v1/54fd7e5e96b113619dbac6fbf10b4d8da6236819> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public void updateBookTitle(String isbn, String newTitle) {
+        Book book = readBook(isbn);
+        if (book != null) {
+            book.setTitle(newTitle);
+            System.out.println("Updated book: " + book);
+        } else {
+            System.out.println("Book not found: " + isbn);
+        }
+    }""" ;
+    tw:kind "method" ;
+    tw:name "updateBookTitle" .
+
+<http://example.org/train/codeblock/java6/v1/6390595e530a3071b6b2867385592d7819ee80e2> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public Book readBook(String isbn) {
+        for (Book book : catalog) {
+            if (book.getIsbn().equals(isbn)) {
+                return book;
+            }
+        }
+        return null;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "readBook" .
+
+<http://example.org/train/codeblock/java6/v1/6d2a781273c8f580b14344eac39f8233efd096dd> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public String toString() {
+        return isbn + " - " + title + " (" + author + ")";
+    }""" ;
+    tw:kind "method" ;
+    tw:name "toString" .
+
+<http://example.org/train/codeblock/java6/v1/8bac987d3df1df29f459c81d5680d9e8068921a9> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public void listBooks() {
+        System.out.println("Catalog:");
+        for (Book book : catalog) {
+            System.out.println(" - " + book);
+        }
+    }""" ;
+    tw:kind "method" ;
+    tw:name "listBooks" .
+
+<http://example.org/train/codeblock/java6/v1/9c0dc339b2364268aefb24a47c0bb4f5a5734876> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """public class LibraryManagement {
+    private final List<Book> catalog = new ArrayList<Book>();
+
+    public void createBook(String isbn, String title, String author) {
+        Book book = new Book(isbn, title, author);
+        catalog.add(book);
+        System.out.println("Created book: " + book);
+    }
+
+    public Book readBook(String isbn) {
+        for (Book book : catalog) {
+            if (book.getIsbn().equals(isbn)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    public void updateBookTitle(String isbn, String newTitle) {
+        Book book = readBook(isbn);
+        if (book != null) {
+            book.setTitle(newTitle);
+            System.out.println("Updated book: " + book);
+        } else {
+            System.out.println("Book not found: " + isbn);
+        }
+    }
+
+    public void deleteBook(String isbn) {
+        for (Iterator<Book> iterator = catalog.iterator(); iterator.hasNext();) {
+            Book book = iterator.next();
+            if (book.getIsbn().equals(isbn)) {
+                iterator.remove();
+                System.out.println("Deleted book: " + isbn);
+                return;
+            }
+        }
+        System.out.println("Book not found: " + isbn);
+    }
+
+    public void listBooks() {
+        System.out.println("Catalog:");
+        for (Book book : catalog) {
+            System.out.println(" - " + book);
+        }
+    }
+
+    public static void main(String[] args) {
+        LibraryManagement manager = new LibraryManagement();
+        manager.createBook("978-0-00", "Legacy Java 6", "Sun Microsystems");
+        manager.createBook("978-0-01", "Patterns", "GoF");
+        manager.listBooks();
+        manager.updateBookTitle("978-0-01", "Design Patterns");
+        manager.listBooks();
+        manager.deleteBook("978-0-00");
+        manager.listBooks();
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "LibraryManagement" .
+
+<http://example.org/train/codeblock/java6/v1/a3f59c631387c93471720471570f47ab1811d23a> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public Book(String isbn, String title, String author) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "Book" .
+
+<http://example.org/train/codeblock/java6/v1/b902bcced8cc0108a907ca8d7e45254a0467dfa2> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public void deleteBook(String isbn) {
+        for (Iterator<Book> iterator = catalog.iterator(); iterator.hasNext();) {
+            Book book = iterator.next();
+            if (book.getIsbn().equals(isbn)) {
+                iterator.remove();
+                System.out.println("Deleted book: " + isbn);
+                return;
+            }
+        }
+        System.out.println("Book not found: " + isbn);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "deleteBook" .
+
+<http://example.org/train/codeblock/java6/v1/b9676b7075e3b74441266446dc7ad356a7f20677> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public void setTitle(String title) {
+        this.title = title;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setTitle" .
+
+<http://example.org/train/codeblock/java6/v1/ec5c27bbb7a407ffc516ea52f8c9fa9411107de6> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public static void main(String[] args) {
+        LibraryManagement manager = new LibraryManagement();
+        manager.createBook("978-0-00", "Legacy Java 6", "Sun Microsystems");
+        manager.createBook("978-0-01", "Patterns", "GoF");
+        manager.listBooks();
+        manager.updateBookTitle("978-0-01", "Design Patterns");
+        manager.listBooks();
+        manager.deleteBook("978-0-00");
+        manager.listBooks();
+    }""" ;
+    tw:kind "method" ;
+    tw:name "main" .
+
+<http://example.org/train/codeblock/java6/v1/f1784569170b71beb957ea2cd545ff9acb165d31> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """
+    public String getTitle() {
+        return title;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getTitle" .
+
+<http://example.org/train/codeblock/java6/v2/39ba534f8424911135ac018db8622e62450fd11b> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/0a34fe24eb8a118871cfd2d7253c638943ea7f9e> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public void delete(String isbn) {
+        Session session = SESSION_FACTORY.openSession();
+        Transaction tx = session.beginTransaction();
+        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);
+        if (entity != null) {
+            session.delete(entity);
+        }
+        tx.commit();
+        session.close();
+    }""" ;
+    tw:kind "method" ;
+    tw:name "delete" .
+
+<http://example.org/train/codeblock/java6/v2/5030ae65f9dcd498296cc7b12c73b91c1c10e372> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """public class LibraryEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "ISBN", nullable = false, length = 20)
+    private String isbn;
+
+    @Column(name = "TITLE", nullable = false, length = 150)
+    private String title;
+
+    @Column(name = "AUTHOR", nullable = false, length = 100)
+    private String author;
+
+    public LibraryEntity() {
+    }
+
+    public LibraryEntity(String isbn, String title, String author) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "LibraryEntity" .
+
+<http://example.org/train/codeblock/java6/v2/59e8fd45714e9cfd35c06c723c3e141ec832a2f7> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setIsbn" .
+
+<http://example.org/train/codeblock/java6/v2/7379b0b2debd30e0c8bfb18d31f3eade7d763ed7> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public LibraryEntity() {
+    }""" ;
+    tw:kind "method" ;
+    tw:name "LibraryEntity" .
+
+<http://example.org/train/codeblock/java6/v2/9a7f20a96ed44fab69e021f79b0acdd52f5068d3> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public String getTitle() {
+        return title;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getTitle" .
+
+<http://example.org/train/codeblock/java6/v2/a77f3bbbf589edc9b62f0d270cb2d849e874da30> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/0a34fe24eb8a118871cfd2d7253c638943ea7f9e> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public LibraryEntity read(String isbn) {
+        Session session = SESSION_FACTORY.openSession();
+        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);
+        session.close();
+        return entity;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "read" .
+
+<http://example.org/train/codeblock/java6/v2/adeba9a5c467de97868ea87b5cd9b82153614ae9> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public String getAuthor() {
+        return author;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getAuthor" .
+
+<http://example.org/train/codeblock/java6/v2/b12db3bd66b77bbb65b95b0913117ff9fea3520a> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/0a34fe24eb8a118871cfd2d7253c638943ea7f9e> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """public class LibraryDao {
+    private static final SessionFactory SESSION_FACTORY;
+
+    static {
+        Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
+        SESSION_FACTORY = configuration.buildSessionFactory();
+    }
+
+    public void create(LibraryEntity entity) {
+        Session session = SESSION_FACTORY.openSession();
+        Transaction tx = session.beginTransaction();
+        session.save(entity);
+        tx.commit();
+        session.close();
+    }
+
+    public LibraryEntity read(String isbn) {
+        Session session = SESSION_FACTORY.openSession();
+        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);
+        session.close();
+        return entity;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<LibraryEntity> list() {
+        Session session = SESSION_FACTORY.openSession();
+        List<LibraryEntity> result = session.createQuery("from LibraryEntity").list();
+        session.close();
+        return result;
+    }
+
+    public void updateTitle(String isbn, String newTitle) {
+        Session session = SESSION_FACTORY.openSession();
+        Transaction tx = session.beginTransaction();
+        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);
+        if (entity != null) {
+            entity.setTitle(newTitle);
+            session.update(entity);
+        }
+        tx.commit();
+        session.close();
+    }
+
+    public void delete(String isbn) {
+        Session session = SESSION_FACTORY.openSession();
+        Transaction tx = session.beginTransaction();
+        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);
+        if (entity != null) {
+            session.delete(entity);
+        }
+        tx.commit();
+        session.close();
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "LibraryDao" .
+
+<http://example.org/train/codeblock/java6/v2/b57770b52c5b0c498a81875025b516c8b624a68d> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/0a34fe24eb8a118871cfd2d7253c638943ea7f9e> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public void updateTitle(String isbn, String newTitle) {
+        Session session = SESSION_FACTORY.openSession();
+        Transaction tx = session.beginTransaction();
+        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);
+        if (entity != null) {
+            entity.setTitle(newTitle);
+            session.update(entity);
+        }
+        tx.commit();
+        session.close();
+    }""" ;
+    tw:kind "method" ;
+    tw:name "updateTitle" .
+
+<http://example.org/train/codeblock/java6/v2/b83ea86d2d2cfba036c9ec4927335ab11926a38d> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public String getIsbn() {
+        return isbn;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getIsbn" .
+
+<http://example.org/train/codeblock/java6/v2/cd8ad012ae52cb63d97f05128b879449173a9d8f> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public void setAuthor(String author) {
+        this.author = author;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setAuthor" .
+
+<http://example.org/train/codeblock/java6/v2/d26c7f4ab15503acd510f8a09f4e1326aaf88a30> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/eaf4be9222772bd925820b2ed52c68cea1880bda> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.h2.Driver</property>
+        <property name="hibernate.connection.url">jdbc:h2:mem:legacy</property>
+        <property name="hibernate.connection.username">sa</property>
+        <property name="hibernate.connection.password"></property>
+        <property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <mapping class="LibraryEntity"/>
+    </session-factory>
+</hibernate-configuration>""" ;
+    tw:kind "section" ;
+    tw:name "section-1" .
+
+<http://example.org/train/codeblock/java6/v2/d326082bcf971ce667f1b3bc866df49c00f99dc7> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/0a34fe24eb8a118871cfd2d7253c638943ea7f9e> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public void create(LibraryEntity entity) {
+        Session session = SESSION_FACTORY.openSession();
+        Transaction tx = session.beginTransaction();
+        session.save(entity);
+        tx.commit();
+        session.close();
+    }""" ;
+    tw:kind "method" ;
+    tw:name "create" .
+
+<http://example.org/train/codeblock/java6/v2/e56cafa1d304a20fb2342f7ca5c50bb7da5895f7> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/f1b9db5f429426db461292b9173bd6e596981907> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """Legacy Java 6 CRUD using Hibernate 3.x SessionFactory.
+Dependencies:
+- hibernate-core 3.6.x
+- h2 database (for testing)
+- javax.persistence 1.0 API
+Compile with JDK 1.6 and include the dependencies above on the classpath.""" ;
+    tw:kind "section" ;
+    tw:name "section-1" .
+
+<http://example.org/train/codeblock/java6/v2/eb73b0cabd7ae8b0089d9187022987b8c4a2346b> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public LibraryEntity(String isbn, String title, String author) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "LibraryEntity" .
+
+<http://example.org/train/codeblock/java6/v2/ef1deb596adf09f2af7575f849a237b95d8c4119> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """
+    public void setTitle(String title) {
+        this.title = title;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setTitle" .
+
+<http://example.org/train/codeblock/java6/v2/ef41750e21b97b776d66dd3973a472170bd6caaf> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java6/v2/0a34fe24eb8a118871cfd2d7253c638943ea7f9e> ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """    public List<LibraryEntity> list() {
+        Session session = SESSION_FACTORY.openSession();
+        List<LibraryEntity> result = session.createQuery("from LibraryEntity").list();
+        session.close();
+        return result;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "list" .
+
+<http://example.org/train/codeblock/java8/v1/13ab92a550b2c5a6737ca9517b222e60266db3b7> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public void delete(String isbn) {
+        catalog.removeIf(book -> book.getIsbn().equals(isbn));
+    }""" ;
+    tw:kind "method" ;
+    tw:name "delete" .
+
+<http://example.org/train/codeblock/java8/v1/1b4469d9a9e7c1cb0931be867f6beb8552297a82> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public String getTitle() {
+        return title;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getTitle" .
+
+<http://example.org/train/codeblock/java8/v1/31c22e739cd498675a985a9b5d2e6bba775f5163> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public Optional<Book> read(String isbn) {
+        return catalog.stream().filter(book -> book.getIsbn().equals(isbn)).findFirst();
+    }""" ;
+    tw:kind "method" ;
+    tw:name "read" .
+
+<http://example.org/train/codeblock/java8/v1/44d2a67ef9341a83f0d56bc5f788f48a5b90c193> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public boolean isAvailable() {
+        return available;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "isAvailable" .
+
+<http://example.org/train/codeblock/java8/v1/57ecd48e9353441ff0208cbca55fa67a04ae0e98> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public String getIsbn() {
+        return isbn;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getIsbn" .
+
+<http://example.org/train/codeblock/java8/v1/5bee1871d7d566d09d4e5343384605b4d44c9eea> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public void updateAvailability(String isbn, boolean available) {
+        read(isbn).ifPresent(book -> {
+            book.setAvailable(available);
+            book.setLastUpdated(LocalDate.now());
+        });
+    }""" ;
+    tw:kind "method" ;
+    tw:name "updateAvailability" .
+
+<http://example.org/train/codeblock/java8/v1/770a0fa108ac1d986735a19b54a89dbc60f64aba> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setAvailable" .
+
+<http://example.org/train/codeblock/java8/v1/7b8e053bde8eea2962084f948c42dd9816a89c77> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public void create(Book book) {
+        catalog.add(book);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "create" .
+
+<http://example.org/train/codeblock/java8/v1/7c04da90e529a34eb7db661640887eb54b82e5ba> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public LocalDate getLastUpdated() {
+        return lastUpdated;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getLastUpdated" .
+
+<http://example.org/train/codeblock/java8/v1/83c89cb4acc20d4a10c06dd05211b4d5ad87e2af> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public Book(String isbn, String title, String author, boolean available) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+        this.available = available;
+        this.lastUpdated = LocalDate.now();
+    }""" ;
+    tw:kind "method" ;
+    tw:name "Book" .
+
+<http://example.org/train/codeblock/java8/v1/88e17388306275b93a9f5ea51968fc7763cf5dae> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public void setLastUpdated(LocalDate lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setLastUpdated" .
+
+<http://example.org/train/codeblock/java8/v1/93c46ed29e2d01bf41f02da674abbc765cb55e8c> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public String getAuthor() {
+        return author;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getAuthor" .
+
+<http://example.org/train/codeblock/java8/v1/c461407cd689aee357f6c3a84de0ee7a72e45faa> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public String toString() {
+        return isbn + " - " + title + " (" + author + ")";
+    }""" ;
+    tw:kind "method" ;
+    tw:name "toString" .
+
+<http://example.org/train/codeblock/java8/v1/dbd372eabc2cdc4695d3988484aa0a52dacabe77> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public static void main(String[] args) {
+        LibraryManager manager = new LibraryManager();
+        manager.create(new Book("978-0-100", "Java 8 in Action", "Raoul-Gabriel", true));
+        manager.create(new Book("978-0-101", "Refactoring", "Martin Fowler", true));
+        System.out.println("Available books: " + manager.listAvailable().size());
+        manager.updateAvailability("978-0-101", false);
+        System.out.println("After checkout: " + manager.listAvailable().size());
+        manager.delete("978-0-100");
+        System.out.println("Remaining: " + manager.catalog.size());
+    }""" ;
+    tw:kind "method" ;
+    tw:name "main" .
+
+<http://example.org/train/codeblock/java8/v1/dc3ccc8eca498874f1c79ee1a437e8f497701558> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+    public List<Book> listAvailable() {
+        return catalog.stream().filter(Book::isAvailable).collect(Collectors.toList());
+    }""" ;
+    tw:kind "method" ;
+    tw:name "listAvailable" .
+
+<http://example.org/train/codeblock/java8/v1/e1a38679e9597068de8b7bddbfbd087fbe9b551f> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+public class LibraryManager {
+    private final List<Book> catalog = new ArrayList<Book>();
+
+    public void create(Book book) {
+        catalog.add(book);
+    }
+
+    public Optional<Book> read(String isbn) {
+        return catalog.stream().filter(book -> book.getIsbn().equals(isbn)).findFirst();
+    }
+
+    public void updateAvailability(String isbn, boolean available) {
+        read(isbn).ifPresent(book -> {
+            book.setAvailable(available);
+            book.setLastUpdated(LocalDate.now());
+        });
+    }
+
+    public void delete(String isbn) {
+        catalog.removeIf(book -> book.getIsbn().equals(isbn));
+    }
+
+    public List<Book> listAvailable() {
+        return catalog.stream().filter(Book::isAvailable).collect(Collectors.toList());
+    }
+
+    public static void main(String[] args) {
+        LibraryManager manager = new LibraryManager();
+        manager.create(new Book("978-0-100", "Java 8 in Action", "Raoul-Gabriel", true));
+        manager.create(new Book("978-0-101", "Refactoring", "Martin Fowler", true));
+        System.out.println("Available books: " + manager.listAvailable().size());
+        manager.updateAvailability("978-0-101", false);
+        System.out.println("After checkout: " + manager.listAvailable().size());
+        manager.delete("978-0-100");
+        System.out.println("Remaining: " + manager.catalog.size());
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "LibraryManager" .
+
+<http://example.org/train/codeblock/java8/v1/fcb93ff89c642d107dd0bd629f9a7d29f5ecd542> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """
+class Book {
+    private final String isbn;
+    private final String title;
+    private final String author;
+    private boolean available;
+    private LocalDate lastUpdated;
+
+    public Book(String isbn, String title, String author, boolean available) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+        this.available = available;
+        this.lastUpdated = LocalDate.now();
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public LocalDate getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDate lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public String toString() {
+        return isbn + " - " + title + " (" + author + ")";
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "Book" .
+
+<http://example.org/train/codeblock/java8/v2/049d36f0e8ef8c7d1940dd138fd156bdba1c7239> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/1ce1c8be7f0fa1a808d8e6e8759a40282298554d> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """    public static void main(String[] args) {
+        SpringApplication.run(LibraryApplication.class, args);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "main" .
+
+<http://example.org/train/codeblock/java8/v2/070e70aae97a0dab77e7955509a2e6094db78f15> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f2f087535df42fe8688f4c9b482ca3d1b7dfbc9b> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """spring.datasource.url=jdbc:h2:mem:legacydb
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+spring.h2.console.enabled=true""" ;
+    tw:kind "section" ;
+    tw:name "section-1" .
+
+<http://example.org/train/codeblock/java8/v2/1020a870a6a8c6ab9e2618c37577ad189d52cf02> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/1920c6772523144f787c2e85e282db9a5e6f4640> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """<build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>""" ;
+    tw:kind "section" ;
+    tw:name "section-5" .
+
+<http://example.org/train/codeblock/java8/v2/151348cc1b570c841bfb90312814e100d69878ae> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public String getIsbn() {
+        return isbn;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getIsbn" .
+
+<http://example.org/train/codeblock/java8/v2/1fb01c2e3bfa844f8f50da4abb3dd76d38c3a71d> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setIsbn" .
+
+<http://example.org/train/codeblock/java8/v2/275fc3b53f3c485be933e114f727cb42228b6a68> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public boolean isAvailable() {
+        return available;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "isAvailable" .
+
+<http://example.org/train/codeblock/java8/v2/2ba13d06e3bc6f07bb9149b59aa45eba34bd3599> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/1920c6772523144f787c2e85e282db9a5e6f4640> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>""" ;
+    tw:kind "section" ;
+    tw:name "section-4" .
+
+<http://example.org/train/codeblock/java8/v2/33290135b585be6c5958ffd98b2895c8f327d14e> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/8609a21c94f1e2f096b18a3bc02bb77995606422> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """    public ResponseEntity<Book> read(@PathVariable String isbn) {
+        Book book = repository.findByIsbn(isbn);
+        return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();
+    }""" ;
+    tw:kind "method" ;
+    tw:name "read" .
+
+<http://example.org/train/codeblock/java8/v2/33be664dd68e3bc73e9a7258353e4d524af95836> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
+    private String author;
+
+    @Column(nullable = false)
+    private String isbn;
+
+    @Column(nullable = false)
+    private boolean available = true;
+
+    protected Book() {
+    }
+
+    public Book(String title, String author, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "Book" .
+
+<http://example.org/train/codeblock/java8/v2/3b79d10efa4ff8734cf4d1d1f951fea7fd46baf9> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/8609a21c94f1e2f096b18a3bc02bb77995606422> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public BookController(BookRepository repository) {
+        this.repository = repository;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "BookController" .
+
+<http://example.org/train/codeblock/java8/v2/3f0ba4cc9bcd05c023b949517dd6d0e4af61d7de> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public Long getId() {
+        return id;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getId" .
+
+<http://example.org/train/codeblock/java8/v2/43022db4bab2d88e40c975a7406cd99d876e0e4e> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public Book(String title, String author, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "Book" .
+
+<http://example.org/train/codeblock/java8/v2/484041e79fca406011b09d19e023cf801715a475> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public void setTitle(String title) {
+        this.title = title;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setTitle" .
+
+<http://example.org/train/codeblock/java8/v2/5e3d3eb855c9f2ad9ec962cafad49c50a654f40c> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/8609a21c94f1e2f096b18a3bc02bb77995606422> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """    public ResponseEntity<Void> delete(@PathVariable String isbn) {
+        Book book = repository.findByIsbn(isbn);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        repository.delete(book);
+        return ResponseEntity.noContent().build();
+    }""" ;
+    tw:kind "method" ;
+    tw:name "delete" .
+
+<http://example.org/train/codeblock/java8/v2/6217f7da1732f17c9628f8c6926c99f94c0990e8> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public String getAuthor() {
+        return author;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getAuthor" .
+
+<http://example.org/train/codeblock/java8/v2/63be6f27e3e6b563a0f488bf6aee75e8f4f9e6df> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/069610910870059d4d83130a398ba9ceeec6df75> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """package legacy.library;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+
+public interface BookRepository extends CrudRepository<Book, Long> {
+    List<Book> findByAvailable(boolean available);
+    Book findByIsbn(String isbn);
+}
+""" ;
+    tw:kind "file" ;
+    tw:name "file" .
+
+<http://example.org/train/codeblock/java8/v2/68b8580dc184984c93fc901b61806d1f5bda57dc> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/1920c6772523144f787c2e85e282db9a5e6f4640> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """<parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.22.RELEASE</version>
+    </parent>""" ;
+    tw:kind "section" ;
+    tw:name "section-2" .
+
+<http://example.org/train/codeblock/java8/v2/6f2fad2c036fee3c4b5acb13ab6c560471686b65> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setAvailable" .
+
+<http://example.org/train/codeblock/java8/v2/7317f9b35d89e067662082425bfd886f1a34a073> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/1920c6772523144f787c2e85e282db9a5e6f4640> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """<properties>
+        <java.version>1.8</java.version>
+    </properties>""" ;
+    tw:kind "section" ;
+    tw:name "section-3" .
+
+<http://example.org/train/codeblock/java8/v2/7c31208c46cd31b6258568ff3b9a32e6772d5f08> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/8609a21c94f1e2f096b18a3bc02bb77995606422> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """    public Book create(@RequestBody Book book) {
+        return repository.save(book);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "create" .
+
+<http://example.org/train/codeblock/java8/v2/a77bf0f3b65ad8e8a966998f748fc117845db35d> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/8609a21c94f1e2f096b18a3bc02bb77995606422> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """    public ResponseEntity<Book> checkout(@PathVariable String isbn) {
+        Book book = repository.findByIsbn(isbn);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        book.setAvailable(false);
+        return ResponseEntity.ok(repository.save(book));
+    }""" ;
+    tw:kind "method" ;
+    tw:name "checkout" .
+
+<http://example.org/train/codeblock/java8/v2/b04ac4197297fa3498ce9f42bb55a03cff160b80> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    protected Book() {
+    }""" ;
+    tw:kind "method" ;
+    tw:name "Book" .
+
+<http://example.org/train/codeblock/java8/v2/bc0b71fad980a73bf25080f04f6ac5797fc48419> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/8609a21c94f1e2f096b18a3bc02bb77995606422> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """    public List<Book> list() {
+        return repository.findByAvailable(true);
+    }""" ;
+    tw:kind "method" ;
+    tw:name "list" .
+
+<http://example.org/train/codeblock/java8/v2/d3280cf5b5e1ea104e66736c64e0b5164a4869c3> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/1ce1c8be7f0fa1a808d8e6e8759a40282298554d> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """public class LibraryApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(LibraryApplication.class, args);
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "LibraryApplication" .
+
+<http://example.org/train/codeblock/java8/v2/d87b54a798acf89d742d4b4c57295765fbe65a06> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public void setAuthor(String author) {
+        this.author = author;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "setAuthor" .
+
+<http://example.org/train/codeblock/java8/v2/ec1f12f16ee20033238a04c299cbf141ecd3a38f> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/8609a21c94f1e2f096b18a3bc02bb77995606422> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """public class BookController {
+    private final BookRepository repository;
+
+    public BookController(BookRepository repository) {
+        this.repository = repository;
+    }
+
+    @PostMapping
+    public Book create(@RequestBody Book book) {
+        return repository.save(book);
+    }
+
+    @GetMapping("/{isbn}")
+    public ResponseEntity<Book> read(@PathVariable String isbn) {
+        Book book = repository.findByIsbn(isbn);
+        return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping
+    public List<Book> list() {
+        return repository.findByAvailable(true);
+    }
+
+    @PutMapping("/{isbn}/checkout")
+    public ResponseEntity<Book> checkout(@PathVariable String isbn) {
+        Book book = repository.findByIsbn(isbn);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        book.setAvailable(false);
+        return ResponseEntity.ok(repository.save(book));
+    }
+
+    @DeleteMapping("/{isbn}")
+    public ResponseEntity<Void> delete(@PathVariable String isbn) {
+        Book book = repository.findByIsbn(isbn);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        repository.delete(book);
+        return ResponseEntity.noContent().build();
+    }
+}""" ;
+    tw:kind "class" ;
+    tw:name "BookController" .
+
+<http://example.org/train/codeblock/java8/v2/f095ee2cfcfebc0bde9167aac718376d1d958bc0> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/1920c6772523144f787c2e85e282db9a5e6f4640> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>legacy.library</groupId>
+    <artifactId>library-manager</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>""" ;
+    tw:kind "section" ;
+    tw:name "section-1" .
+
+<http://example.org/train/codeblock/java8/v2/fc96f8b900c2b5270975ec72cce516d701f6eac2> a tw:CodeBlock ;
+    tw:belongsToFile <http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """
+    public String getTitle() {
+        return title;
+    }""" ;
+    tw:kind "method" ;
+    tw:name "getTitle" .
+
+<http://example.org/train/file/cobol/v2/e786b0c00cc4a80160018a6640ba456260663288> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/cobol/v2/4e018c61c1c2e18fbef09fbfa330c83af36f5c4e> ;
+    tw:path "cobol\\v2\\README.txt" .
+
+<http://example.org/train/file/delphi/v2/763131a907f0c261446acb2c72bdbb2f103a23ff> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/delphi/v2/4becae9049adf7b9607976807d61323da9a67ac3> ;
+    tw:path "delphi\\v2\\LibraryDataModule.dfm" .
+
+<http://example.org/train/file/delphi/v2/ea344c40cb6bf4ed611e9bd2729cfb686cfe65c5> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/delphi/v2/7d01dd07344408a8391e428f1e12742dd1bade76> ;
+    tw:path "delphi\\v2\\README.txt" .
+
+<http://example.org/train/file/java-derivatives/v1/a025987bd9c40cc2ddb90395c4f6dc64ee727744> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/28e7eb69c43bc1e6f04652ee84545d1797cf03bb> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\MultivariateFunction.java" .
+
+<http://example.org/train/file/java-derivatives/v1/bc52c00971b7feda69bee8a42f18341316fe2019> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/dd0ec59134d953d599abb968eec87444b5676a06> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\UnivariateFunction.java" .
+
+<http://example.org/train/file/java6/v2/eaf4be9222772bd925820b2ed52c68cea1880bda> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java6/v2/d26c7f4ab15503acd510f8a09f4e1326aaf88a30> ;
+    tw:path "java6\\v2\\hibernate.cfg.xml" .
+
+<http://example.org/train/file/java6/v2/f1b9db5f429426db461292b9173bd6e596981907> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java6/v2/e56cafa1d304a20fb2342f7ca5c50bb7da5895f7> ;
+    tw:path "java6\\v2\\README.txt" .
+
+<http://example.org/train/file/java8/v2/069610910870059d4d83130a398ba9ceeec6df75> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java8/v2/63be6f27e3e6b563a0f488bf6aee75e8f4f9e6df> ;
+    tw:path "java8\\v2\\src\\main\\java\\legacy\\library\\BookRepository.java" .
+
+<http://example.org/train/file/java8/v2/f2f087535df42fe8688f4c9b482ca3d1b7dfbc9b> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java8/v2/070e70aae97a0dab77e7955509a2e6094db78f15> ;
+    tw:path "java8\\v2\\src\\main\\resources\\application.properties" .
+
+<http://example.org/train/file/java-derivatives/v1/359c63bca73755e211d75a1eb5e86b0f1d8c732e> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/3547892df6e683ce4d358a5d831a0b27191ed4f4>,
+        <http://example.org/train/codeblock/java-derivatives/v1/71c7e2be0fbac476c317dbe765f62fd2ae8b5b95> ;
+    tw:path "java_derivatives\\v1\\README.txt" .
+
+<http://example.org/train/file/java8/v2/1ce1c8be7f0fa1a808d8e6e8759a40282298554d> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java8/v2/049d36f0e8ef8c7d1940dd138fd156bdba1c7239>,
+        <http://example.org/train/codeblock/java8/v2/d3280cf5b5e1ea104e66736c64e0b5164a4869c3> ;
+    tw:path "java8\\v2\\src\\main\\java\\legacy\\library\\LibraryApplication.java" .
+
+<http://example.org/train/file/java-derivatives/v1/20ed9762f67daa179fc810b4729453dabb543a6c> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/0306e0ead4639c318062cd00aa967316cdbc0210>,
+        <http://example.org/train/codeblock/java-derivatives/v1/2c4f74721404d4e1e1c55ca83bcc9cda7e5c3e30>,
+        <http://example.org/train/codeblock/java-derivatives/v1/a8dd689f010707887242124fb938c4c7d7e490ff> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\Application.java" .
+
+<http://example.org/train/file/java-derivatives/v1/5a2d3c048caa65c9b2d4decfcba7d489b55ca761> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/3a471b2e46d552fe7ad32595d7d9a5175115f851>,
+        <http://example.org/train/codeblock/java-derivatives/v1/3a8727061eb9d859dd4059bf1549ec3d1dc04a4a>,
+        <http://example.org/train/codeblock/java-derivatives/v1/5e94ef54aa4b46156f552412710729ae75b7f7c1> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\GradientCalculator.java" .
+
+<http://example.org/train/file/cobol/v2/7b131521a1b27247f4d5f6b157c69028f91fdcfb> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/cobol/v2/44ad54933643817a2fe0142889938f973c089e24>,
+        <http://example.org/train/codeblock/cobol/v2/8dcc58f7434ea16bb57c637debdff26506acbad4>,
+        <http://example.org/train/codeblock/cobol/v2/d954cf872da328213392375647c96e41b76313ef>,
+        <http://example.org/train/codeblock/cobol/v2/f17daf3adfc9e8bf2a1ad20bb49ea83d58a9595b> ;
+    tw:path "cobol\\v2\\library-db2.cob" .
+
+<http://example.org/train/file/java-derivatives/v1/e8b5bef75d87ab26f69eaac23e90e17f70a38703> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/001c1a0e91713e128685930c6ffdf21afc520118>,
+        <http://example.org/train/codeblock/java-derivatives/v1/4398f783ddbecd2cef0953d518f2808a6010b5db>,
+        <http://example.org/train/codeblock/java-derivatives/v1/d7c5b64b7e888c18d21fa400b26b6376672809a3>,
+        <http://example.org/train/codeblock/java-derivatives/v1/e57e12ed500a2374b56225b772032d7e8568585d>,
+        <http://example.org/train/codeblock/java-derivatives/v1/ed4aeb171e73fe7e6d9fea0fb738c9b82ad862ff> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\UnivariateSamples.java" .
+
+<http://example.org/train/file/java-derivatives/v1/f8222a30da6178274e407f6c49fc621a6fa42872> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/09a4b398742173455322f1c210009c0226b7877d>,
+        <http://example.org/train/codeblock/java-derivatives/v1/7d1090363dc3f9574707e05995e71b1c12f98ba1>,
+        <http://example.org/train/codeblock/java-derivatives/v1/8c6a2b1fd3089883c21fc13a97b804521446d48a>,
+        <http://example.org/train/codeblock/java-derivatives/v1/d31e0a151fe74ba068ab83c1c78f6ded1989a9e7>,
+        <http://example.org/train/codeblock/java-derivatives/v1/fbc2bf1044864b09311d1fc854419dd841db2d72> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\SampleFunctions.java" .
+
+<http://example.org/train/file/java8/v2/1920c6772523144f787c2e85e282db9a5e6f4640> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java8/v2/1020a870a6a8c6ab9e2618c37577ad189d52cf02>,
+        <http://example.org/train/codeblock/java8/v2/2ba13d06e3bc6f07bb9149b59aa45eba34bd3599>,
+        <http://example.org/train/codeblock/java8/v2/68b8580dc184984c93fc901b61806d1f5bda57dc>,
+        <http://example.org/train/codeblock/java8/v2/7317f9b35d89e067662082425bfd886f1a34a073>,
+        <http://example.org/train/codeblock/java8/v2/f095ee2cfcfebc0bde9167aac718376d1d958bc0> ;
+    tw:path "java8\\v2\\pom.xml" .
+
+<http://example.org/train/file/delphi/v2/2e74b056220a3e7926e657f467cc045e108b08fc> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/delphi/v2/0eec845d2852e526779d316ee9f36208c36b21df>,
+        <http://example.org/train/codeblock/delphi/v2/8dff360e806f4842ef51e918d015aef3ae966ac3>,
+        <http://example.org/train/codeblock/delphi/v2/95f2613a2e9956396c139cd47263dfb6e94280dd>,
+        <http://example.org/train/codeblock/delphi/v2/a87e22a68b7868133d02c6261d5e5c7be084f521>,
+        <http://example.org/train/codeblock/delphi/v2/da0c845fbee6d61d9cd1d4b932976cadcd836568>,
+        <http://example.org/train/codeblock/delphi/v2/fa5e2da0eac503441d07120c4b6a0d8716216dcb> ;
+    tw:path "delphi\\v2\\LibraryDataModule.pas" .
+
+<http://example.org/train/file/java6/v2/0a34fe24eb8a118871cfd2d7253c638943ea7f9e> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java6/v2/39ba534f8424911135ac018db8622e62450fd11b>,
+        <http://example.org/train/codeblock/java6/v2/a77f3bbbf589edc9b62f0d270cb2d849e874da30>,
+        <http://example.org/train/codeblock/java6/v2/b12db3bd66b77bbb65b95b0913117ff9fea3520a>,
+        <http://example.org/train/codeblock/java6/v2/b57770b52c5b0c498a81875025b516c8b624a68d>,
+        <http://example.org/train/codeblock/java6/v2/d326082bcf971ce667f1b3bc866df49c00f99dc7>,
+        <http://example.org/train/codeblock/java6/v2/ef41750e21b97b776d66dd3973a472170bd6caaf> ;
+    tw:path "java6\\v2\\LibraryDao.java" .
+
+<http://example.org/train/file/java-derivatives/v1/89cf3a3022c10a95916849f12c7c309685b0390c> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/0ac31346ad93729a7c3502d11fa657c545a04a2a>,
+        <http://example.org/train/codeblock/java-derivatives/v1/30bc6e1d2303e725945633f9567441ffd4749842>,
+        <http://example.org/train/codeblock/java-derivatives/v1/368e9cf311cc2a60ed9b867455360750c30491c8>,
+        <http://example.org/train/codeblock/java-derivatives/v1/8f78f6a29e38b88ba8f3f6c127ad4b8ed0e1e9bf>,
+        <http://example.org/train/codeblock/java-derivatives/v1/b395ca6b0724acb33e290d84dcc30c1c2533aafa>,
+        <http://example.org/train/codeblock/java-derivatives/v1/be76292586bb413de4f2e1e8df744c725f6d2381>,
+        <http://example.org/train/codeblock/java-derivatives/v1/fd5bb29d32d3981393aac6455beff6af2da29510> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\BasicArithmeticCalculator.java" .
+
+<http://example.org/train/file/java-derivatives/v1/8c17e67869977921181f70c1ee344df8f338da1b> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/55948b647eed98116c9dd29d3b5bb4e23fdf8192>,
+        <http://example.org/train/codeblock/java-derivatives/v1/5bea6b1320b56fa414bdd346973943c9c07ec689>,
+        <http://example.org/train/codeblock/java-derivatives/v1/5d71e0d76ad0c05fcebfaf270093d890b7105b4f>,
+        <http://example.org/train/codeblock/java-derivatives/v1/82b4158e29d8715aa3751e984ac0b0d204fcfac8>,
+        <http://example.org/train/codeblock/java-derivatives/v1/92085ae0a79072f860fbb7b901d59ef871cfdffa>,
+        <http://example.org/train/codeblock/java-derivatives/v1/9a5de8db22e2f4dcae153f22e3989f954f3cc1be>,
+        <http://example.org/train/codeblock/java-derivatives/v1/c7305d70a8bec8841dd2bca9b43e4e639ba65368> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\FiniteDifferencePartialDerivativeCalculator.java" .
+
+<http://example.org/train/file/java-derivatives/v1/9fb701b3a20479f95ec687dde854ec1634114519> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/2d16a3f648a6ada67ec335071d6fa10f9b7e626c>,
+        <http://example.org/train/codeblock/java-derivatives/v1/63d14d88400a72e15e741474322b857373fa69ba>,
+        <http://example.org/train/codeblock/java-derivatives/v1/a5f3c4998fd96803acd368d052b14f99e4533e96>,
+        <http://example.org/train/codeblock/java-derivatives/v1/d10b4c09363fb284e23cadc22abe90a23cd9446d>,
+        <http://example.org/train/codeblock/java-derivatives/v1/dd5442b29088dd908f5636f8d8235fee6d862aed>,
+        <http://example.org/train/codeblock/java-derivatives/v1/de29f269c63156311ec4b5e49fa88c328128705e>,
+        <http://example.org/train/codeblock/java-derivatives/v1/fea560dbb02ac3abdc37526b799d6a1ed7463cbe> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\SingleVariableDerivativeCalculator.java" .
+
+<http://example.org/train/file/java-derivatives/v1/a5a2cf9604f290e26eeb5864fe8626cd425ae0a6> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java-derivatives/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java-derivatives/v1/124b2925a3f92660f364cc8f756da9bdf63dde09>,
+        <http://example.org/train/codeblock/java-derivatives/v1/297e4bf2d937ba7b161a7cc9184e13675db34127>,
+        <http://example.org/train/codeblock/java-derivatives/v1/5abb1c010f260b874c445415ed1c6a96cb1dc83c>,
+        <http://example.org/train/codeblock/java-derivatives/v1/8e36c9c5e354471a491fbc22ceacc239ad2f37cd>,
+        <http://example.org/train/codeblock/java-derivatives/v1/aa606813c68202fd5e9a1a5d9482e709921f8cac>,
+        <http://example.org/train/codeblock/java-derivatives/v1/b36ba8cd218ffff2bf4db70ec373301119eb4da8>,
+        <http://example.org/train/codeblock/java-derivatives/v1/cbcfde99cb1d9e2710535c63be9114a97496c827> ;
+    tw:path "java_derivatives\\v1\\src\\main\\java\\com\\example\\derivcalc\\NumericalIntegralCalculator.java" .
+
+<http://example.org/train/file/java8/v2/8609a21c94f1e2f096b18a3bc02bb77995606422> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java8/v2/33290135b585be6c5958ffd98b2895c8f327d14e>,
+        <http://example.org/train/codeblock/java8/v2/3b79d10efa4ff8734cf4d1d1f951fea7fd46baf9>,
+        <http://example.org/train/codeblock/java8/v2/5e3d3eb855c9f2ad9ec962cafad49c50a654f40c>,
+        <http://example.org/train/codeblock/java8/v2/7c31208c46cd31b6258568ff3b9a32e6772d5f08>,
+        <http://example.org/train/codeblock/java8/v2/a77bf0f3b65ad8e8a966998f748fc117845db35d>,
+        <http://example.org/train/codeblock/java8/v2/bc0b71fad980a73bf25080f04f6ac5797fc48419>,
+        <http://example.org/train/codeblock/java8/v2/ec1f12f16ee20033238a04c299cbf141ecd3a38f> ;
+    tw:path "java8\\v2\\src\\main\\java\\legacy\\library\\BookController.java" .
+
+<http://example.org/train/version/cobol/v2> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:label "cobol v2" .
+
+<http://example.org/train/file/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/cobol/v1/2881a98951356c467e5cef359cd4f366fbe6f156>,
+        <http://example.org/train/codeblock/cobol/v1/31596190c694a80e8294adf39bd8313beb8d5c1c>,
+        <http://example.org/train/codeblock/cobol/v1/405c861858b1f09fa627be7e586668d8f7c4a75e>,
+        <http://example.org/train/codeblock/cobol/v1/5f6cfcba83c24f871276f8ba10c95ae0f13d5396>,
+        <http://example.org/train/codeblock/cobol/v1/62d4264c7e10f3b6f955f0e800c92450cd1c2f24>,
+        <http://example.org/train/codeblock/cobol/v1/924c943c8113ea298001bd833c73d8cd338085ad>,
+        <http://example.org/train/codeblock/cobol/v1/ee8210da9702afcb1c2f705e652578031d006fee>,
+        <http://example.org/train/codeblock/cobol/v1/faa4559446ef3573d4010e09516c45e71b0c850d> ;
+    tw:path "cobol\\v1\\library-basic.cob" .
+
+<http://example.org/train/file/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java6/v2/5030ae65f9dcd498296cc7b12c73b91c1c10e372>,
+        <http://example.org/train/codeblock/java6/v2/59e8fd45714e9cfd35c06c723c3e141ec832a2f7>,
+        <http://example.org/train/codeblock/java6/v2/7379b0b2debd30e0c8bfb18d31f3eade7d763ed7>,
+        <http://example.org/train/codeblock/java6/v2/9a7f20a96ed44fab69e021f79b0acdd52f5068d3>,
+        <http://example.org/train/codeblock/java6/v2/adeba9a5c467de97868ea87b5cd9b82153614ae9>,
+        <http://example.org/train/codeblock/java6/v2/b83ea86d2d2cfba036c9ec4927335ab11926a38d>,
+        <http://example.org/train/codeblock/java6/v2/cd8ad012ae52cb63d97f05128b879449173a9d8f>,
+        <http://example.org/train/codeblock/java6/v2/eb73b0cabd7ae8b0089d9187022987b8c4a2346b>,
+        <http://example.org/train/codeblock/java6/v2/ef1deb596adf09f2af7575f849a237b95d8c4119> ;
+    tw:path "java6\\v2\\LibraryEntity.java" .
+
+<http://example.org/train/version/cobol/v1> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:label "cobol v1" .
+
+<http://example.org/train/file/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/delphi/v1/0da3d9ada0bed58651ebe9ccdffa23e3cb083d22>,
+        <http://example.org/train/codeblock/delphi/v1/185969ad4f449c4cd545c2806b689c457ec1b453>,
+        <http://example.org/train/codeblock/delphi/v1/1940abaa30f1d277ac38872790fb13a643d773b4>,
+        <http://example.org/train/codeblock/delphi/v1/1c9973a8e8459c9295937991871d9169e55dba97>,
+        <http://example.org/train/codeblock/delphi/v1/4b27c549944be3e635b1db7a26d237b030ca3612>,
+        <http://example.org/train/codeblock/delphi/v1/660191a299ffc0a932368f298ba0b5c03fe63b69>,
+        <http://example.org/train/codeblock/delphi/v1/8f12e0af4d546b7e99c90ce5dba061c457e08557>,
+        <http://example.org/train/codeblock/delphi/v1/cc51233d16deb58859aed1c4d728f383b4ec8db5>,
+        <http://example.org/train/codeblock/delphi/v1/d9fdd1aa9b0fa2dc657d93b4eccd9fab4c8009cf>,
+        <http://example.org/train/codeblock/delphi/v1/db5d557ab97a2a8a9aa4a81bdebb1e48a5decbe1>,
+        <http://example.org/train/codeblock/delphi/v1/e965a5a9fc7b053aff2576d0a2935e52f116627f> ;
+    tw:path "delphi\\v1\\LibraryManager.pas" .
+
+<http://example.org/train/version/delphi/v2> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:label "delphi v2" .
+
+<http://example.org/train/file/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:containsBlock <http://example.org/train/codeblock/java8/v2/151348cc1b570c841bfb90312814e100d69878ae>,
+        <http://example.org/train/codeblock/java8/v2/1fb01c2e3bfa844f8f50da4abb3dd76d38c3a71d>,
+        <http://example.org/train/codeblock/java8/v2/275fc3b53f3c485be933e114f727cb42228b6a68>,
+        <http://example.org/train/codeblock/java8/v2/33be664dd68e3bc73e9a7258353e4d524af95836>,
+        <http://example.org/train/codeblock/java8/v2/3f0ba4cc9bcd05c023b949517dd6d0e4af61d7de>,
+        <http://example.org/train/codeblock/java8/v2/43022db4bab2d88e40c975a7406cd99d876e0e4e>,
+        <http://example.org/train/codeblock/java8/v2/484041e79fca406011b09d19e023cf801715a475>,
+        <http://example.org/train/codeblock/java8/v2/6217f7da1732f17c9628f8c6926c99f94c0990e8>,
+        <http://example.org/train/codeblock/java8/v2/6f2fad2c036fee3c4b5acb13ab6c560471686b65>,
+        <http://example.org/train/codeblock/java8/v2/b04ac4197297fa3498ce9f42bb55a03cff160b80>,
+        <http://example.org/train/codeblock/java8/v2/d87b54a798acf89d742d4b4c57295765fbe65a06>,
+        <http://example.org/train/codeblock/java8/v2/fc96f8b900c2b5270975ec72cce516d701f6eac2> ;
+    tw:path "java8\\v2\\src\\main\\java\\legacy\\library\\Book.java" .
+
+<http://example.org/train/version/delphi/v1> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:label "delphi v1" .
+
+<http://example.org/train/file/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java6/v1/013ca1c27a35652a66cf488c9003b95ae5429ad8>,
+        <http://example.org/train/codeblock/java6/v1/043de3167cbaa6d3fc0cf2bb40bafc8818e6ba3b>,
+        <http://example.org/train/codeblock/java6/v1/26df152ba8b8d4eecea4087bb1e122e2d824f479>,
+        <http://example.org/train/codeblock/java6/v1/4f6f322009aa34e8bed0d1154660b777f2499f37>,
+        <http://example.org/train/codeblock/java6/v1/54fd7e5e96b113619dbac6fbf10b4d8da6236819>,
+        <http://example.org/train/codeblock/java6/v1/6390595e530a3071b6b2867385592d7819ee80e2>,
+        <http://example.org/train/codeblock/java6/v1/6d2a781273c8f580b14344eac39f8233efd096dd>,
+        <http://example.org/train/codeblock/java6/v1/8bac987d3df1df29f459c81d5680d9e8068921a9>,
+        <http://example.org/train/codeblock/java6/v1/9c0dc339b2364268aefb24a47c0bb4f5a5734876>,
+        <http://example.org/train/codeblock/java6/v1/a3f59c631387c93471720471570f47ab1811d23a>,
+        <http://example.org/train/codeblock/java6/v1/b902bcced8cc0108a907ca8d7e45254a0467dfa2>,
+        <http://example.org/train/codeblock/java6/v1/b9676b7075e3b74441266446dc7ad356a7f20677>,
+        <http://example.org/train/codeblock/java6/v1/ec5c27bbb7a407ffc516ea52f8c9fa9411107de6>,
+        <http://example.org/train/codeblock/java6/v1/f1784569170b71beb957ea2cd545ff9acb165d31> ;
+    tw:path "java6\\v1\\LibraryManagement.java" .
+
+<http://example.org/train/language/cobol> a tw:Language ;
+    tw:label "cobol" .
+
+<http://example.org/train/version/java6/v1> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:label "java6 v1" .
+
+<http://example.org/train/file/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> a tw:File ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:containsBlock <http://example.org/train/codeblock/java8/v1/13ab92a550b2c5a6737ca9517b222e60266db3b7>,
+        <http://example.org/train/codeblock/java8/v1/1b4469d9a9e7c1cb0931be867f6beb8552297a82>,
+        <http://example.org/train/codeblock/java8/v1/31c22e739cd498675a985a9b5d2e6bba775f5163>,
+        <http://example.org/train/codeblock/java8/v1/44d2a67ef9341a83f0d56bc5f788f48a5b90c193>,
+        <http://example.org/train/codeblock/java8/v1/57ecd48e9353441ff0208cbca55fa67a04ae0e98>,
+        <http://example.org/train/codeblock/java8/v1/5bee1871d7d566d09d4e5343384605b4d44c9eea>,
+        <http://example.org/train/codeblock/java8/v1/770a0fa108ac1d986735a19b54a89dbc60f64aba>,
+        <http://example.org/train/codeblock/java8/v1/7b8e053bde8eea2962084f948c42dd9816a89c77>,
+        <http://example.org/train/codeblock/java8/v1/7c04da90e529a34eb7db661640887eb54b82e5ba>,
+        <http://example.org/train/codeblock/java8/v1/83c89cb4acc20d4a10c06dd05211b4d5ad87e2af>,
+        <http://example.org/train/codeblock/java8/v1/88e17388306275b93a9f5ea51968fc7763cf5dae>,
+        <http://example.org/train/codeblock/java8/v1/93c46ed29e2d01bf41f02da674abbc765cb55e8c>,
+        <http://example.org/train/codeblock/java8/v1/c461407cd689aee357f6c3a84de0ee7a72e45faa>,
+        <http://example.org/train/codeblock/java8/v1/dbd372eabc2cdc4695d3988484aa0a52dacabe77>,
+        <http://example.org/train/codeblock/java8/v1/dc3ccc8eca498874f1c79ee1a437e8f497701558>,
+        <http://example.org/train/codeblock/java8/v1/e1a38679e9597068de8b7bddbfbd087fbe9b551f>,
+        <http://example.org/train/codeblock/java8/v1/fcb93ff89c642d107dd0bd629f9a7d29f5ecd542> ;
+    tw:path "java8\\v1\\LibraryManager.java" .
+
+<http://example.org/train/version/java8/v1> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:label "java8 v1" .
+
+<http://example.org/train/language/delphi> a tw:Language ;
+    tw:label "delphi" .
+
+<http://example.org/train/version/java6/v2> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:label "java6 v2" .
+
+<http://example.org/train/language/java6> a tw:Language ;
+    tw:label "java6" .
+
+<http://example.org/train/version/java8/v2> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:label "java8 v2" .
+
+<http://example.org/train/language/java8> a tw:Language ;
+    tw:label "java8" .
+
+<http://example.org/train/language/java-derivatives> a tw:Language ;
+    tw:label "java_derivatives" .
+
+<http://example.org/train/version/java-derivatives/v1> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/java-derivatives> ;
+    tw:label "java_derivatives v1" .
+

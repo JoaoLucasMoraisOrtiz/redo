@@ -1,0 +1,394 @@
+[
+  {
+    "query": "How does the COBOL v1 library console register a brand new book entry?",
+    "answer": "Block ADD-BOOK (paragraph) located in cobol\\v1\\library-basic.cob for cobol / cobol v1.\n\nCode:\n       ADD-BOOK.\n           DISPLAY \"ISBN: \"\n           ACCEPT WS-ISBN\n           DISPLAY \"TITLE: \"\n           ACCEPT WS-TITLE\n           DISPLAY \"AUTHOR: \"\n           ACCEPT WS-AUTHOR\n           MOVE WS-ISBN TO ISBN\n           MOVE WS-TITLE TO TITLE\n           MOVE WS-AUTHOR TO AUTHOR\n           MOVE 'Y' TO AVAILABLE\n           OPEN EXTEND BOOK-FILE\n           WRITE BOOK-RECORD\n           CLOSE BOOK-FILE."
+  },
+  {
+    "query": "Where in the COBOL v1 flow do we look up a book by ISBN for display?",
+    "answer": "Block READ-BOOK (paragraph) located in cobol\\v1\\library-basic.cob for cobol / cobol v1.\n\nCode:\n       READ-BOOK.\n           DISPLAY \"ISBN TO SEARCH: \"\n           ACCEPT WS-ISBN\n           OPEN INPUT BOOK-FILE\n           PERFORM UNTIL EOF\n               READ BOOK-FILE\n                   AT END EXIT PERFORM\n               END-READ\n               IF ISBN = WS-ISBN THEN\n                   DISPLAY \"FOUND: \" TITLE \" BY \" AUTHOR\n                   DISPLAY \"AVAILABLE: \" AVAILABLE\n                   EXIT PERFORM\n               END-IF\n           END-PERFORM\n           CLOSE BOOK-FILE."
+  },
+  {
+    "query": "Which paragraph drives the main menu loop in the COBOL v1 sample?",
+    "answer": "Block MAIN-LOOP (paragraph) located in cobol\\v1\\library-basic.cob for cobol / cobol v1.\n\nCode:\n       MAIN-LOOP.\n           DISPLAY \"LIBRARY CRUD - COBOL V1\".\n           PERFORM UNTIL WS-END = 'Y'\n               DISPLAY \"C)reate R)ead U)pdate D)elete L)ist E)xit\"\n               ACCEPT WS-OPTION\n               EVALUATE WS-OPTION\n                   WHEN 'C' PERFORM ADD-BOOK\n                   WHEN 'R' PERFORM READ-BOOK\n                   WHEN 'U' PERFORM UPDATE-BOOK\n                   WHEN 'D' PERFORM DELETE-BOOK\n                   WHEN 'L' PERFORM LIST-BOOKS\n                   WHEN 'E' MOVE 'Y' TO WS-END\n                   WHEN OTHER DISPLAY \"INVALID OPTION\"\n               END-EVALUATE\n           END-PERFORM\n           STOP RUN."
+  },
+  {
+    "query": "In the COBOL v1 example, what code lists every stored book on screen?",
+    "answer": "Block LIST-BOOKS (paragraph) located in cobol\\v1\\library-basic.cob for cobol / cobol v1.\n\nCode:\n       LIST-BOOKS.\n           OPEN INPUT BOOK-FILE\n           PERFORM UNTIL EOF\n               READ BOOK-FILE\n                   AT END EXIT PERFORM\n               END-READ\n               DISPLAY ISBN \" - \" TITLE \" (\" AUTHOR \")\"\n           END-PERFORM\n           CLOSE BOOK-FILE."
+  },
+  {
+    "query": "Which COBOL v1 paragraph deletes a book record from the sequential file?",
+    "answer": "Block DELETE-BOOK (paragraph) located in cobol\\v1\\library-basic.cob for cobol / cobol v1.\n\nCode:\n       DELETE-BOOK.\n           DISPLAY \"ISBN TO DELETE: \"\n           ACCEPT WS-ISBN\n           OPEN I-O BOOK-FILE\n           PERFORM UNTIL EOF\n               READ BOOK-FILE\n                   AT END EXIT PERFORM\n               END-READ\n               IF ISBN = WS-ISBN THEN\n                   DELETE BOOK-FILE RECORD\n                   DISPLAY \"DELETED\"\n                   EXIT PERFORM\n               END-IF\n           END-PERFORM\n           CLOSE BOOK-FILE."
+  },
+  {
+    "query": "Where does the COBOL v2 program establish the DB2 connection?",
+    "answer": "Block DB-CONNECT (paragraph) located in cobol\\v2\\library-db2.cob for cobol / cobol v2.\n\nCode:\n       DB-CONNECT.\n           EXEC SQL\n               CONNECT TO LEGACYDB\n           END-EXEC.\n           IF SQLCODE NOT = 0 THEN\n               DISPLAY \"CONNECT FAILED\" SQLCODE\n               STOP RUN\n           END-IF."
+  },
+  {
+    "query": "Show me the COBOL v2 routine that runs through insert, read, update, and delete using embedded SQL.",
+    "answer": "Block SAMPLE-OPERATIONS (paragraph) located in cobol\\v2\\library-db2.cob for cobol / cobol v2.\n\nCode:\n       SAMPLE-OPERATIONS.\n           MOVE '978-0-2000000' TO WS-ISBN.\n           MOVE 'Mainframe Patterns' TO WS-TITLE.\n           MOVE 'IBM Press' TO WS-AUTHOR.\n           MOVE 'Y' TO WS-AVAILABLE.\n           EXEC SQL\n               INSERT INTO LIB_BOOK (ISBN, TITLE, AUTHOR, AVAILABLE)\n               VALUES (:WS-ISBN, :WS-TITLE, :WS-AUTHOR, :WS-AVAILABLE)\n           END-EXEC.\n           DISPLAY \"Inserted \" WS-ISBN.\n\n           EXEC SQL\n               SELECT TITLE, AUTHOR, AVAILABLE\n               INTO :WS-TITLE, :WS-AUTHOR, :WS-AVAILABLE\n               FROM LIB_BOOK WHERE ISBN = :WS-ISBN\n           END-EXEC.\n           IF SQLCODE = 0 THEN\n               DISPLAY \"Read \" WS-TITLE\n           END-IF.\n\n           MOVE 'N' TO WS-AVAILABLE.\n           EXEC SQL\n               UPDATE LIB_BOOK\n               SET AVAILABLE = :WS-AVAILABLE\n               WHERE ISBN = :WS-ISBN\n           END-EXEC.\n           DISPLAY \"Updated availability\".\n\n           EXEC SQL\n               DELETE FROM LIB_BOOK WHERE ISBN = :WS-ISBN\n           END-EXEC.\n           DISPLAY \"Deleted \" WS-ISBN."
+  },
+  {
+    "query": "Which snippet in COBOL v2 commits work and disconnects from DB2?",
+    "answer": "Block DB-DISCONNECT (paragraph) located in cobol\\v2\\library-db2.cob for cobol / cobol v2.\n\nCode:\n       DB-DISCONNECT.\n           EXEC SQL COMMIT END-EXEC.\n           EXEC SQL DISCONNECT CURRENT END-EXEC."
+  },
+  {
+    "query": "What paragraph ties the COBOL v2 run together, invoking connect, operations, and disconnect?",
+    "answer": "Block PROGRAM-ID (paragraph) located in cobol\\v2\\library-db2.cob for cobol / cobol v2.\n\nCode:\n       PROGRAM-ID. LIBRARY-DB2.\n       ENVIRONMENT DIVISION.\n       DATA DIVISION.\n       WORKING-STORAGE SECTION.\n       EXEC SQL INCLUDE SQLCA END-EXEC.\n       01  WS-ISBN        PIC X(13).\n       01  WS-TITLE       PIC X(50).\n       01  WS-AUTHOR      PIC X(30).\n       01  WS-AVAILABLE   PIC X(01).\n       PROCEDURE DIVISION.\n           DISPLAY \"COBOL + DB2 CRUD V2\".\n           PERFORM DB-CONNECT.\n           PERFORM SAMPLE-OPERATIONS.\n           PERFORM DB-DISCONNECT.\n           STOP RUN."
+  },
+  {
+    "query": "In the Delphi v1 manager, where is the helper that scans the list for a book by ISBN?",
+    "answer": "Block TLibraryManager.FindBook (function) located in delphi\\v1\\LibraryManager.pas for delphi / delphi v1.\n\nCode:\nfunction TLibraryManager.FindBook(const AIsbn: string): TBook;\nvar\n  I: Integer;\n  Book: TBook;\nbegin\n  Result := nil;\n  for I := 0 to FBooks.Count - 1 do\n  begin\n    Book := TBook(FBooks[I]);\n    if SameText(Book.Isbn, AIsbn) then\n    begin\n      Result := Book;\n      Exit;\n    end;\n  end;\nend;"
+  },
+  {
+    "query": "Which Delphi v1 method updates a book title once it is found?",
+    "answer": "Block TLibraryManager.UpdateTitle (procedure) located in delphi\\v1\\LibraryManager.pas for delphi / delphi v1.\n\nCode:\nprocedure TLibraryManager.UpdateTitle(const AIsbn, ATitle: string);\nvar\n  Book: TBook;\nbegin\n  Book := FindBook(AIsbn);\n  if Assigned(Book) then\n    Book.Title := ATitle;\nend;"
+  },
+  {
+    "query": "Where does the Delphi v1 manager produce a formatted list of all books?",
+    "answer": "Block TLibraryManager.ListBooks (procedure) located in delphi\\v1\\LibraryManager.pas for delphi / delphi v1.\n\nCode:\nprocedure TLibraryManager.ListBooks(AStrings: TStrings);\nvar\n  I: Integer;\n  Book: TBook;\nbegin\n  AStrings.Clear;\n  for I := 0 to FBooks.Count - 1 do\n  begin\n    Book := TBook(FBooks[I]);\n    AStrings.Add(Format('%s - %s (%s)', [Book.Isbn, Book.Title, Book.Author]));\n  end;\nend;"
+  },
+  {
+    "query": "Which Delphi v1 routine removes a book object from the catalog and frees it?",
+    "answer": "Block TLibraryManager.RemoveBook (procedure) located in delphi\\v1\\LibraryManager.pas for delphi / delphi v1.\n\nCode:\nprocedure TLibraryManager.RemoveBook(const AIsbn: string);\nvar\n  Book: TBook;\nbegin\n  Book := FindBook(AIsbn);\n  if Assigned(Book) then\n  begin\n    FBooks.Remove(Book);\n    Book.Free;\n  end;\nend;"
+  },
+  {
+    "query": "Where is the Delphi v2 data module opening the Jet connection and binding the table?",
+    "answer": "Block TdmLibrary.SetupConnection (procedure) located in delphi\\v2\\LibraryDataModule.pas for delphi / delphi v2.\n\nCode:\nprocedure TdmLibrary.SetupConnection;\nbegin\n  Connection.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=library.mdb;Persist Security Info=False;';\n  Connection.LoginPrompt := False;\n  Connection.Open;\n  TableBooks.Connection := Connection;\n  TableBooks.TableName := 'LIB_BOOK';\n  TableBooks.Open;\nend;"
+  },
+  {
+    "query": "Which Delphi v2 routine inserts a new row into the LIB_BOOK table?",
+    "answer": "Block TdmLibrary.CreateBook (procedure) located in delphi\\v2\\LibraryDataModule.pas for delphi / delphi v2.\n\nCode:\nprocedure TdmLibrary.CreateBook(const AIsbn, ATitle, AAuthor: string);\nbegin\n  TableBooks.Insert;\n  TableBooks.FieldByName('ISBN').AsString := AIsbn;\n  TableBooks.FieldByName('TITLE').AsString := ATitle;\n  TableBooks.FieldByName('AUTHOR').AsString := AAuthor;\n  TableBooks.FieldByName('AVAILABLE').AsBoolean := True;\n  TableBooks.Post;\nend;"
+  },
+  {
+    "query": "Show the Delphi v2 procedure that toggles the availability flag for an ISBN.",
+    "answer": "Block TdmLibrary.UpdateAvailability (procedure) located in delphi\\v2\\LibraryDataModule.pas for delphi / delphi v2.\n\nCode:\nprocedure TdmLibrary.UpdateAvailability(const AIsbn: string; AAvailable: Boolean);\nbegin\n  if FindBook(AIsbn) then\n  begin\n    TableBooks.Edit;\n    TableBooks.FieldByName('AVAILABLE').AsBoolean := AAvailable;\n    TableBooks.Post;\n  end;\nend;"
+  },
+  {
+    "query": "Which Delphi v2 method deletes a book row once it has been located?",
+    "answer": "Block TdmLibrary.DeleteBook (procedure) located in delphi\\v2\\LibraryDataModule.pas for delphi / delphi v2.\n\nCode:\nprocedure TdmLibrary.DeleteBook(const AIsbn: string);\nbegin\n  if FindBook(AIsbn) then\n    TableBooks.Delete;\nend;"
+  },
+  {
+    "query": "In the Java 6 console manager, which method instantiates a Book and stores it?",
+    "answer": "Block createBook (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public void createBook(String isbn, String title, String author) {\n        Book book = new Book(isbn, title, author);\n        catalog.add(book);\n        System.out.println(\"Created book: \" + book);\n    }"
+  },
+  {
+    "query": "Where does the Java 6 sample search the catalog list to read a book by ISBN?",
+    "answer": "Block readBook (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public Book readBook(String isbn) {\n        for (Book book : catalog) {\n            if (book.getIsbn().equals(isbn)) {\n                return book;\n            }\n        }\n        return null;\n    }"
+  },
+  {
+    "query": "Which Java 6 method iterates with an Iterator to remove a book entry?",
+    "answer": "Block deleteBook (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public void deleteBook(String isbn) {\n        for (Iterator<Book> iterator = catalog.iterator(); iterator.hasNext();) {\n            Book book = iterator.next();\n            if (book.getIsbn().equals(isbn)) {\n                iterator.remove();\n                System.out.println(\"Deleted book: \" + isbn);\n                return;\n            }\n        }\n        System.out.println(\"Book not found: \" + isbn);\n    }"
+  },
+  {
+    "query": "Where in Java 6 do we print every book currently tracked?",
+    "answer": "Block listBooks (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public void listBooks() {\n        System.out.println(\"Catalog:\");\n        for (Book book : catalog) {\n            System.out.println(\" - \" + book);\n        }\n    }"
+  },
+  {
+    "query": "Which Java 6 code sample exercises the CRUD operations within main()?",
+    "answer": "Block main (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public static void main(String[] args) {\n        LibraryManagement manager = new LibraryManagement();\n        manager.createBook(\"978-0-00\", \"Legacy Java 6\", \"Sun Microsystems\");\n        manager.createBook(\"978-0-01\", \"Patterns\", \"GoF\");\n        manager.listBooks();\n        manager.updateBookTitle(\"978-0-01\", \"Design Patterns\");\n        manager.listBooks();\n        manager.deleteBook(\"978-0-00\");\n        manager.listBooks();\n    }"
+  },
+  {
+    "query": "In the Spring Boot controller (Java 8 v2), where is the POST handler that saves a book?",
+    "answer": "Block create (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\BookController.java for java8 / java8 v2.\n\nCode:\n    public Book create(@RequestBody Book book) {\n        return repository.save(book);\n    }"
+  },
+  {
+    "query": "Which Java 8 controller method handles checkout by flagging the book unavailable?",
+    "answer": "Block checkout (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\BookController.java for java8 / java8 v2.\n\nCode:\n    public ResponseEntity<Book> checkout(@PathVariable String isbn) {\n        Book book = repository.findByIsbn(isbn);\n        if (book == null) {\n            return ResponseEntity.notFound().build();\n        }\n        book.setAvailable(false);\n        return ResponseEntity.ok(repository.save(book));\n    }"
+  },
+  {
+    "query": "Where does the Java 8 REST controller respond to GET requests for all available books?",
+    "answer": "Block list (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\BookController.java for java8 / java8 v2.\n\nCode:\n    public List<Book> list() {\n        return repository.findByAvailable(true);\n    }"
+  },
+  {
+    "query": "Which Java 8 endpoint deletes a book and returns HTTP 204 on success?",
+    "answer": "Block delete (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\BookController.java for java8 / java8 v2.\n\nCode:\n    public ResponseEntity<Void> delete(@PathVariable String isbn) {\n        Book book = repository.findByIsbn(isbn);\n        if (book == null) {\n            return ResponseEntity.notFound().build();\n        }\n        repository.delete(book);\n        return ResponseEntity.noContent().build();\n    }"
+  },
+  {
+    "query": "Which controller method fetches a single book by ISBN and returns 404 when missing?",
+    "answer": "Block read (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\BookController.java for java8 / java8 v2.\n\nCode:\n    public ResponseEntity<Book> read(@PathVariable String isbn) {\n        Book book = repository.findByIsbn(isbn);\n        return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();\n    }"
+  },
+  {
+    "query": "Where is the Spring Data repository interface that exposes findByIsbn?",
+    "answer": "Block file (file) located in java8\\v2\\src\\main\\java\\legacy\\library\\BookRepository.java for java8 / java8 v2.\n\nCode:\npackage legacy.library;\n\nimport java.util.List;\n\nimport org.springframework.data.repository.CrudRepository;\n\npublic interface BookRepository extends CrudRepository<Book, Long> {\n    List<Book> findByAvailable(boolean available);\n    Book findByIsbn(String isbn);\n}\n"
+  },
+  {
+    "query": "Which class boots the Spring application in the Java 8 sample?",
+    "answer": "Block LibraryApplication (class) located in java8\\v2\\src\\main\\java\\legacy\\library\\LibraryApplication.java for java8 / java8 v2.\n\nCode:\npublic class LibraryApplication {\n    public static void main(String[] args) {\n        SpringApplication.run(LibraryApplication.class, args);\n    }\n}"
+  },
+  {
+    "query": "In the COBOL v1 batch, which paragraph performs the title rewrite when updating a record?",
+    "answer": "Block UPDATE-BOOK (paragraph) located in cobol\\v1\\library-basic.cob for cobol / cobol v1.\n\nCode:\n       UPDATE-BOOK.\n           DISPLAY \"ISBN TO UPDATE: \"\n           ACCEPT WS-ISBN\n           DISPLAY \"NEW TITLE: \"\n           ACCEPT WS-TITLE\n           OPEN I-O BOOK-FILE\n           PERFORM UNTIL EOF\n               READ BOOK-FILE\n                   AT END EXIT PERFORM\n               END-READ\n               IF ISBN = WS-ISBN THEN\n                   MOVE WS-TITLE TO TITLE\n                   REWRITE BOOK-RECORD\n                   DISPLAY \"UPDATED\"\n                   EXIT PERFORM\n               END-IF\n           END-PERFORM\n           CLOSE BOOK-FILE."
+  },
+  {
+    "query": "Where does the COBOL v1 source declare PROGRAM-ID and enter the environment division?",
+    "answer": "Block PROGRAM-ID (paragraph) located in cobol\\v1\\library-basic.cob for cobol / cobol v1.\n\nCode:\n       PROGRAM-ID. LIBRARY-BASIC.\n       ENVIRONMENT DIVISION.\n       INPUT-OUTPUT SECTION."
+  },
+  {
+    "query": "Which COBOL v1 snippet defines FILE-CONTROL and working storage for the library file?",
+    "answer": "Block FILE-CONTROL (paragraph) located in cobol\\v1\\library-basic.cob for cobol / cobol v1.\n\nCode:\n       FILE-CONTROL.\n           SELECT BOOK-FILE ASSIGN TO \"books.dat\"\n              ORGANIZATION IS LINE SEQUENTIAL.\n       DATA DIVISION.\n       FILE SECTION.\n       FD  BOOK-FILE.\n       01  BOOK-RECORD.\n           05 ISBN        PIC X(13).\n           05 TITLE       PIC X(40).\n           05 AUTHOR      PIC X(30).\n           05 AVAILABLE   PIC X(01).\n       WORKING-STORAGE SECTION.\n       01  WS-OPTION      PIC X VALUE SPACE.\n       01  WS-END         PIC X VALUE 'N'.\n       01  WS-ISBN        PIC X(13).\n       01  WS-TITLE       PIC X(40).\n       01  WS-AUTHOR      PIC X(30).\n       PROCEDURE DIVISION."
+  },
+  {
+    "query": "Which documentation block summarises the COBOL v2 embedded SQL requirements?",
+    "answer": "Block section-1 (section) located in cobol\\v2\\README.txt for cobol / cobol v2.\n\nCode:\nLegacy COBOL program using embedded SQL for IBM DB2.\nRequires DB2 precompiler (DSNHPC) and catalog table LIB_BOOK with columns:\n  ISBN CHAR(13) PRIMARY KEY\n  TITLE VARCHAR(50)\n  AUTHOR VARCHAR(30)\n  AVAILABLE CHAR(1)\nCompile with Enterprise COBOL 4.x or compatible, enabling embedded SQL."
+  },
+  {
+    "query": "In Delphi v1, which constructor seeds the TBook fields and defaults availability to true?",
+    "answer": "Block TBook.Create (constructor) located in delphi\\v1\\LibraryManager.pas for delphi / delphi v1.\n\nCode:\nconstructor TBook.Create(const AIsbn, ATitle, AAuthor: string);\nbegin\n  inherited Create;\n  FIsbn := AIsbn;\n  FTitle := ATitle;\n  FAuthor := AAuthor;\n  FAvailable := True;\nend;"
+  },
+  {
+    "query": "Where does the Delphi v1 manager allocate its internal TList for books?",
+    "answer": "Block TLibraryManager.Create (constructor) located in delphi\\v1\\LibraryManager.pas for delphi / delphi v1.\n\nCode:\nconstructor TLibraryManager.Create;\nbegin\n  inherited Create;\n  FBooks := TList.Create;\nend;"
+  },
+  {
+    "query": "Which Delphi v1 destructor releases every stored book object and the list itself?",
+    "answer": "Block TLibraryManager.Destroy (destructor) located in delphi\\v1\\LibraryManager.pas for delphi / delphi v1.\n\nCode:\ndestructor TLibraryManager.Destroy;\nvar\n  I: Integer;\nbegin\n  for I := 0 to FBooks.Count - 1 do\n    TObject(FBooks[I]).Free;\n  FBooks.Free;\n  inherited Destroy;\nend;"
+  },
+  {
+    "query": "Which Delphi v1 routine wraps TBook.Create and pushes the instance into FBooks?",
+    "answer": "Block TLibraryManager.AddBook (procedure) located in delphi\\v1\\LibraryManager.pas for delphi / delphi v1.\n\nCode:\nprocedure TLibraryManager.AddBook(const AIsbn, ATitle, AAuthor: string);\nbegin\n  FBooks.Add(TBook.Create(AIsbn, ATitle, AAuthor));\nend;"
+  },
+  {
+    "query": "Where in Delphi v1 do we expose a simple GetBook helper returning FindBook's result?",
+    "answer": "Block TLibraryManager.GetBook (function) located in delphi\\v1\\LibraryManager.pas for delphi / delphi v1.\n\nCode:\nfunction TLibraryManager.GetBook(const AIsbn: string): TBook;\nbegin\n  Result := FindBook(AIsbn);\nend;"
+  },
+  {
+    "query": "Which Delphi v2 helper checks the ADO table for a matching ISBN and returns true when found?",
+    "answer": "Block TdmLibrary.FindBook (function) located in delphi\\v2\\LibraryDataModule.pas for delphi / delphi v2.\n\nCode:\nfunction TdmLibrary.FindBook(const AIsbn: string): Boolean;\nbegin\n  Result := TableBooks.Locate('ISBN', AIsbn, []);\nend;"
+  },
+  {
+    "query": "Where can I see the Delphi v2 data module's DFM layout describing the ADO components?",
+    "answer": "Block section-1 (section) located in delphi\\v2\\LibraryDataModule.dfm for delphi / delphi v2.\n\nCode:\nobject dmLibrary: TdmLibrary\n  OldCreateOrder = False\n  Height = 240\n  Width = 320\n  object Connection: TADOConnection\n    LoginPrompt = False\n    Left = 24\n    Top = 24\n  end\n  object TableBooks: TADOTable\n    Connection = Connection\n    CursorType = ctStatic\n    TableName = 'LIB_BOOK'\n    Left = 120\n    Top = 24\n  end\nend"
+  },
+  {
+    "query": "How does the Java 6 console sample retitle a book once readBook succeeds?",
+    "answer": "Block updateBookTitle (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public void updateBookTitle(String isbn, String newTitle) {\n        Book book = readBook(isbn);\n        if (book != null) {\n            book.setTitle(newTitle);\n            System.out.println(\"Updated book: \" + book);\n        } else {\n            System.out.println(\"Book not found: \" + isbn);\n        }\n    }"
+  },
+  {
+    "query": "Which Java 6 constructor instantiates a Book with isbn, title, and author values?",
+    "answer": "Block Book (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public Book(String isbn, String title, String author) {\n        this.isbn = isbn;\n        this.title = title;\n        this.author = author;\n    }"
+  },
+  {
+    "query": "Where is the Java 6 getter that exposes the ISBN string for a book entry?",
+    "answer": "Block getIsbn (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public String getIsbn() {\n        return isbn;\n    }"
+  },
+  {
+    "query": "Which Java 6 accessor returns the current title stored on the Book class?",
+    "answer": "Block getTitle (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public String getTitle() {\n        return title;\n    }"
+  },
+  {
+    "query": "Where does the Java 6 Book mutator assign a new title value?",
+    "answer": "Block setTitle (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public void setTitle(String title) {\n        this.title = title;\n    }"
+  },
+  {
+    "query": "Which Java 6 snippet returns the author name from the Book object?",
+    "answer": "Block getAuthor (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public String getAuthor() {\n        return author;\n    }"
+  },
+  {
+    "query": "Where is the Java 6 toString definition that formats isbn, title, and author?",
+    "answer": "Block toString (method) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\n    public String toString() {\n        return isbn + \" - \" + title + \" (\" + author + \")\";\n    }"
+  },
+  {
+    "query": "Which block captures the entire inner Book class used by the Java 6 console manager?",
+    "answer": "Block Book (class) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\nclass Book {\n    private String isbn;\n    private String title;\n    private String author;\n\n    public Book(String isbn, String title, String author) {\n        this.isbn = isbn;\n        this.title = title;\n        this.author = author;\n    }\n\n    public String getIsbn() {\n        return isbn;\n    }\n\n    public String getTitle() {\n        return title;\n    }\n\n    public void setTitle(String title) {\n        this.title = title;\n    }\n\n    public String getAuthor() {\n        return author;\n    }\n\n    public String toString() {\n        return isbn + \" - \" + title + \" (\" + author + \")\";\n    }\n}" 
+  },
+  {
+    "query": "Where can I review the full Java 6 LibraryManagement class including CRUD operations?",
+    "answer": "Block LibraryManagement (class) located in java6\\v1\\LibraryManagement.java for java6 / java6 v1.\n\nCode:\npublic class LibraryManagement {\n    private final List<Book> catalog = new ArrayList<Book>();\n\n    public void createBook(String isbn, String title, String author) {\n        Book book = new Book(isbn, title, author);\n        catalog.add(book);\n        System.out.println(\"Created book: \" + book);\n    }\n\n    public Book readBook(String isbn) {\n        for (Book book : catalog) {\n            if (book.getIsbn().equals(isbn)) {\n                return book;\n            }\n        }\n        return null;\n    }\n\n    public void updateBookTitle(String isbn, String newTitle) {\n        Book book = readBook(isbn);\n        if (book != null) {\n            book.setTitle(newTitle);\n            System.out.println(\"Updated book: \" + book);\n        } else {\n            System.out.println(\"Book not found: \" + isbn);\n        }\n    }\n\n    public void deleteBook(String isbn) {\n        for (Iterator<Book> iterator = catalog.iterator(); iterator.hasNext();) {\n            Book book = iterator.next();\n            if (book.getIsbn().equals(isbn)) {\n                iterator.remove();\n                System.out.println(\"Deleted book: \" + isbn);\n                return;\n            }\n        }\n        System.out.println(\"Book not found: \" + isbn);\n    }\n\n    public void listBooks() {\n        System.out.println(\"Catalog:\");\n        for (Book book : catalog) {\n            System.out.println(\" - \" + book);\n        }\n    }\n\n    public static void main(String[] args) {\n        LibraryManagement manager = new LibraryManagement();\n        manager.createBook(\"978-0-00\", \"Legacy Java 6\", \"Sun Microsystems\");\n        manager.createBook(\"978-0-01\", \"Patterns\", \"GoF\");\n        manager.listBooks();\n        manager.updateBookTitle(\"978-0-01\", \"Design Patterns\");\n        manager.listBooks();\n        manager.deleteBook(\"978-0-00\");\n        manager.listBooks();\n    }\n}"
+  },
+  {
+    "query": "Which Java 6 DAO helper opens a session and persists a LibraryEntity?",
+    "answer": "Block create (method) located in java6\\v2\\LibraryDao.java for java6 / java6 v2.\n\nCode:\n    public void create(LibraryEntity entity) {\n        Session session = SESSION_FACTORY.openSession();\n        Transaction tx = session.beginTransaction();\n        session.save(entity);\n        tx.commit();\n        session.close();\n    }"
+  },
+  {
+    "query": "Where does the Hibernate-based DAO fetch a LibraryEntity by ISBN?",
+    "answer": "Block read (method) located in java6\\v2\\LibraryDao.java for java6 / java6 v2.\n\nCode:\n    public LibraryEntity read(String isbn) {\n        Session session = SESSION_FACTORY.openSession();\n        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);\n        session.close();\n        return entity;\n    }"
+  },
+  {
+    "query": "Which Java 6 DAO method issues an HQL query to list all LibraryEntity rows?",
+    "answer": "Block list (method) located in java6\\v2\\LibraryDao.java for java6 / java6 v2.\n\nCode:\n    public List<LibraryEntity> list() {\n        Session session = SESSION_FACTORY.openSession();\n        List<LibraryEntity> result = session.createQuery(\"from LibraryEntity\").list();\n        session.close();\n        return result;\n    }"
+  },
+  {
+    "query": "How does the Java 6 DAO propagate a renamed title back to the database?",
+    "answer": "Block updateTitle (method) located in java6\\v2\\LibraryDao.java for java6 / java6 v2.\n\nCode:\n    public void updateTitle(String isbn, String newTitle) {\n        Session session = SESSION_FACTORY.openSession();\n        Transaction tx = session.beginTransaction();\n        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);\n        if (entity != null) {\n            entity.setTitle(newTitle);\n            session.update(entity);\n        }\n        tx.commit();\n        session.close();\n    }"
+  },
+  {
+    "query": "Which DAO method handles deletions using Hibernate sessions in the Java 6 v2 sample?",
+    "answer": "Block delete (method) located in java6\\v2\\LibraryDao.java for java6 / java6 v2.\n\nCode:\n    public void delete(String isbn) {\n        Session session = SESSION_FACTORY.openSession();\n        Transaction tx = session.beginTransaction();\n        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);\n        if (entity != null) {\n            session.delete(entity);\n        }\n        tx.commit();\n        session.close();\n    }"
+  },
+  {
+    "query": "Where is the full Hibernate-based LibraryDao class definition stored?",
+    "answer": "Block LibraryDao (class) located in java6\\v2\\LibraryDao.java for java6 / java6 v2.\n\nCode:\npublic class LibraryDao {\n    private static final SessionFactory SESSION_FACTORY;\n\n    static {\n        Configuration configuration = new Configuration().configure(\"hibernate.cfg.xml\");\n        SESSION_FACTORY = configuration.buildSessionFactory();\n    }\n\n    public void create(LibraryEntity entity) {\n        Session session = SESSION_FACTORY.openSession();\n        Transaction tx = session.beginTransaction();\n        session.save(entity);\n        tx.commit();\n        session.close();\n    }\n\n    public LibraryEntity read(String isbn) {\n        Session session = SESSION_FACTORY.openSession();\n        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);\n        session.close();\n        return entity;\n    }\n\n    @SuppressWarnings(\"unchecked\")\n    public List<LibraryEntity> list() {\n        Session session = SESSION_FACTORY.openSession();\n        List<LibraryEntity> result = session.createQuery(\"from LibraryEntity\").list();\n        session.close();\n        return result;\n    }\n\n    public void updateTitle(String isbn, String newTitle) {\n        Session session = SESSION_FACTORY.openSession();\n        Transaction tx = session.beginTransaction();\n        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);\n        if (entity != null) {\n            entity.setTitle(newTitle);\n            session.update(entity);\n        }\n        tx.commit();\n        session.close();\n    }\n\n    public void delete(String isbn) {\n        Session session = SESSION_FACTORY.openSession();\n        Transaction tx = session.beginTransaction();\n        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);\n        if (entity != null) {\n            session.delete(entity);\n        }\n        tx.commit();\n        session.close();\n    }\n}"
+  },
+  {
+    "query": "Which block contains the full JPA-mapped LibraryEntity class used by Hibernate?",
+    "answer": "Block LibraryEntity (class) located in java6\\v2\\LibraryEntity.java for java6 / java6 v2.\n\nCode:\npublic class LibraryEntity implements Serializable {\n    private static final long serialVersionUID = 1L;\n\n    @Id\n    @Column(name = \"ISBN\", nullable = false, length = 20)\n    private String isbn;\n\n    @Column(name = \"TITLE\", nullable = false, length = 150)\n    private String title;\n\n    @Column(name = \"AUTHOR\", nullable = false, length = 100)\n    private String author;\n\n    public LibraryEntity() {\n    }\n\n    public LibraryEntity(String isbn, String title, String author) {\n        this.isbn = isbn;\n        this.title = title;\n        this.author = author;\n    }\n\n    public String getIsbn() {\n        return isbn;\n    }\n\n    public void setIsbn(String isbn) {\n        this.isbn = isbn;\n    }\n\n    public String getTitle() {\n        return title;\n    }\n\n    public void setTitle(String title) {\n        this.title = title;\n    }\n\n    public String getAuthor() {\n        return author;\n    }\n\n    public void setAuthor(String author) {\n        this.author = author;\n    }\n}"
+  },
+  {
+    "query": "Where is the default no-arg LibraryEntity constructor captured for Hibernate use?",
+    "answer": "Block LibraryEntity (method) located in java6\\v2\\LibraryEntity.java for java6 / java6 v2.\n\nCode:\n    public LibraryEntity() {\n    }"
+  },
+  {
+    "query": "Which Java 6 entity constructor assigns isbn, title, and author into fields?",
+    "answer": "Block LibraryEntity (method) located in java6\\v2\\LibraryEntity.java for java6 / java6 v2.\n\nCode:\n    public LibraryEntity(String isbn, String title, String author) {\n        this.isbn = isbn;\n        this.title = title;\n        this.author = author;\n    }"
+  },
+  {
+    "query": "Where does the Java 6 entity getter deliver the ISBN column value?",
+    "answer": "Block getIsbn (method) located in java6\\v2\\LibraryEntity.java for java6 / java6 v2.\n\nCode:\n    public String getIsbn() {\n        return isbn;\n    }"
+  },
+  {
+    "query": "Which setter in LibraryEntity updates the title attribute?",
+    "answer": "Block setTitle (method) located in java6\\v2\\LibraryEntity.java for java6 / java6 v2.\n\nCode:\n    public void setTitle(String title) {\n        this.title = title;\n    }"
+  },
+  {
+    "query": "Where is the LibraryEntity mutator that stores a fresh author string?",
+    "answer": "Block setAuthor (method) located in java6\\v2\\LibraryEntity.java for java6 / java6 v2.\n\nCode:\n    public void setAuthor(String author) {\n        this.author = author;\n    }"
+  },
+  {
+    "query": "Which method in LibraryEntity persists incoming ISBN updates?",
+    "answer": "Block setIsbn (method) located in java6\\v2\\LibraryEntity.java for java6 / java6 v2.\n\nCode:\n    public void setIsbn(String isbn) {\n        this.isbn = isbn;\n    }"
+  },
+  {
+    "query": "Which Java 6 entity getter returns the author column value?",
+    "answer": "Block getAuthor (method) located in java6\\v2\\LibraryEntity.java for java6 / java6 v2.\n\nCode:\n    public String getAuthor() {\n        return author;\n    }"
+  },
+  {
+    "query": "Where is the Hibernate configuration XML specifying driver, URL, and mapping?",
+    "answer": "Block section-1 (section) located in java6\\v2\\hibernate.cfg.xml for java6 / java6 v2.\n\nCode:\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE hibernate-configuration PUBLIC\n        \"-//Hibernate/Hibernate Configuration DTD 3.0//EN\"\n        \"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd\">\n<hibernate-configuration>\n    <session-factory>\n        <property name=\"hibernate.connection.driver_class\">org.h2.Driver</property>\n        <property name=\"hibernate.connection.url\">jdbc:h2:mem:legacy</property>\n        <property name=\"hibernate.connection.username\">sa</property>\n        <property name=\"hibernate.connection.password\"></property>\n        <property name=\"hibernate.dialect\">org.hibernate.dialect.H2Dialect</property>\n        <property name=\"hibernate.hbm2ddl.auto\">update</property>\n        <mapping class=\"LibraryEntity\"/>\n    </session-factory>\n</hibernate-configuration>"
+  },
+  {
+    "query": "Which README block documents the legacy Java 6 Hibernate dependencies?",
+    "answer": "Block section-1 (section) located in java6\\v2\\README.txt for java6 / java6 v2.\n\nCode:\nLegacy Java 6 CRUD using Hibernate 3.x SessionFactory.\nDependencies:\n- hibernate-core 3.6.x\n- h2 database (for testing)\n- javax.persistence 1.0 API\nCompile with JDK 1.6 and include the dependencies above on the classpath."
+  },
+  {
+    "query": "In the Java 8 stream-based manager, where do we append a Book into the in-memory catalog?",
+    "answer": "Block create (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public void create(Book book) {\n        catalog.add(book);\n    }"
+  },
+  {
+    "query": "Which Java 8 method returns an Optional lookup by ISBN using stream filtering?",
+    "answer": "Block read (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public Optional<Book> read(String isbn) {\n        return catalog.stream().filter(book -> book.getIsbn().equals(isbn)).findFirst();\n    }"
+  },
+  {
+    "query": "Where does the Java 8 sample flip availability and stamp LocalDate.now()?",
+    "answer": "Block updateAvailability (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public void updateAvailability(String isbn, boolean available) {\n        read(isbn).ifPresent(book -> {\n            book.setAvailable(available);\n            book.setLastUpdated(LocalDate.now());\n        });\n    }"
+  },
+  {
+    "query": "Which snippet in the Java 8 manager removes books using removeIf?",
+    "answer": "Block delete (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public void delete(String isbn) {\n        catalog.removeIf(book -> book.getIsbn().equals(isbn));\n    }"
+  },
+  {
+    "query": "Where does the Java 8 code collect available books via stream filter?",
+    "answer": "Block listAvailable (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public List<Book> listAvailable() {\n        return catalog.stream().filter(Book::isAvailable).collect(Collectors.toList());\n    }"
+  },
+  {
+    "query": "What main routine demonstrates the Java 8 manager's CRUD workflow?",
+    "answer": "Block main (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public static void main(String[] args) {\n        LibraryManager manager = new LibraryManager();\n        manager.create(new Book(\"978-0-100\", \"Java 8 in Action\", \"Raoul-Gabriel\", true));\n        manager.create(new Book(\"978-0-101\", \"Refactoring\", \"Martin Fowler\", true));\n        System.out.println(\"Available books: \" + manager.listAvailable().size());\n        manager.updateAvailability(\"978-0-101\", false);\n        System.out.println(\"After checkout: \" + manager.listAvailable().size());\n        manager.delete(\"978-0-100\");\n        System.out.println(\"Remaining: \" + manager.catalog.size());\n    }"
+  },
+  {
+    "query": "Where can I view the entire Java 8 LibraryManager class with stream operations?",
+    "answer": "Block LibraryManager (class) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\npublic class LibraryManager {\n    private final List<Book> catalog = new ArrayList<Book>();\n\n    public void create(Book book) {\n        catalog.add(book);\n    }\n\n    public Optional<Book> read(String isbn) {\n        return catalog.stream().filter(book -> book.getIsbn().equals(isbn)).findFirst();\n    }\n\n    public void updateAvailability(String isbn, boolean available) {\n        read(isbn).ifPresent(book -> {\n            book.setAvailable(available);\n            book.setLastUpdated(LocalDate.now());\n        });\n    }\n\n    public void delete(String isbn) {\n        catalog.removeIf(book -> book.getIsbn().equals(isbn));\n    }\n\n    public List<Book> listAvailable() {\n        return catalog.stream().filter(Book::isAvailable).collect(Collectors.toList());\n    }\n\n    public static void main(String[] args) {\n        LibraryManager manager = new LibraryManager();\n        manager.create(new Book(\"978-0-100\", \"Java 8 in Action\", \"Raoul-Gabriel\", true));\n        manager.create(new Book(\"978-0-101\", \"Refactoring\", \"Martin Fowler\", true));\n        System.out.println(\"Available books: \" + manager.listAvailable().size());\n        manager.updateAvailability(\"978-0-101\", false);\n        System.out.println(\"After checkout: \" + manager.listAvailable().size());\n        manager.delete(\"978-0-100\");\n        System.out.println(\"Remaining: \" + manager.catalog.size());\n    }\n}"
+  },
+  {
+    "query": "Which block defines the Java 8 inner Book class holding lastUpdated state?",
+    "answer": "Block Book (class) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\nclass Book {\n    private final String isbn;\n    private final String title;\n    private final String author;\n    private boolean available;\n    private LocalDate lastUpdated;\n\n    public Book(String isbn, String title, String author, boolean available) {\n        this.isbn = isbn;\n        this.title = title;\n        this.author = author;\n        this.available = available;\n        this.lastUpdated = LocalDate.now();\n    }\n\n    public String getIsbn() {\n        return isbn;\n    }\n\n    public String getTitle() {\n        return title;\n    }\n\n    public String getAuthor() {\n        return author;\n    }\n\n    public boolean isAvailable() {\n        return available;\n    }\n\n    public void setAvailable(boolean available) {\n        this.available = available;\n    }\n\n    public LocalDate getLastUpdated() {\n        return lastUpdated;\n    }\n\n    public void setLastUpdated(LocalDate lastUpdated) {\n        this.lastUpdated = lastUpdated;\n    }\n\n    public String toString() {\n        return isbn + \" - \" + title + \" (\" + author + \")\";\n    }\n}"
+  },
+  {
+    "query": "Where is the Java 8 Book constructor seeding isbn, title, author, availability, and lastUpdated?",
+    "answer": "Block Book (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public Book(String isbn, String title, String author, boolean available) {\n        this.isbn = isbn;\n        this.title = title;\n        this.author = author;\n        this.available = available;\n        this.lastUpdated = LocalDate.now();\n    }"
+  },
+  {
+    "query": "Which Java 8 getter reports whether a book is available?",
+    "answer": "Block isAvailable (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public boolean isAvailable() {\n        return available;\n    }"
+  },
+  {
+    "query": "Where does the Java 8 setAvailable mutator toggle the availability flag?",
+    "answer": "Block setAvailable (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public void setAvailable(boolean available) {\n        this.available = available;\n    }"
+  },
+  {
+    "query": "Which method exposes the LocalDate lastUpdated value on the Java 8 Book?",
+    "answer": "Block getLastUpdated (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public LocalDate getLastUpdated() {\n        return lastUpdated;\n    }"
+  },
+  {
+    "query": "Where is the setter assigning a new LocalDate on the Java 8 Book?",
+    "answer": "Block setLastUpdated (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public void setLastUpdated(LocalDate lastUpdated) {\n        this.lastUpdated = lastUpdated;\n    }"
+  },
+  {
+    "query": "Which Java 8 method formats a Book as \"isbn - title (author)\"?",
+    "answer": "Block toString (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public String toString() {\n        return isbn + \" - \" + title + \" (\" + author + \")\";\n    }"
+  },
+  {
+    "query": "Where is the Java 8 getter returning the stored ISBN string?",
+    "answer": "Block getIsbn (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public String getIsbn() {\n        return isbn;\n    }"
+  },
+  {
+    "query": "Which Java 8 accessor exposes the book title field?",
+    "answer": "Block getTitle (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public String getTitle() {\n        return title;\n    }"
+  },
+  {
+    "query": "Where is the getter returning the author label on the Java 8 Book?",
+    "answer": "Block getAuthor (method) located in java8\\v1\\LibraryManager.java for java8 / java8 v1.\n\nCode:\n    public String getAuthor() {\n        return author;\n    }"
+  },
+  {
+    "query": "Which Java 8 REST entity class defines the @Id and availability fields for books?",
+    "answer": "Block Book (class) located in java8\\v2\\src\\main\\java\\legacy\\library\\Book.java for java8 / java8 v2.\n\nCode:\npublic class Book {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    @Column(nullable = false)\n    private String title;\n\n    @Column(nullable = false)\n    private String author;\n\n    @Column(nullable = false)\n    private String isbn;\n\n    @Column(nullable = false)\n    private boolean available = true;\n\n    protected Book() {\n    }\n\n    public Book(String title, String author, String isbn) {\n        this.title = title;\n        this.author = author;\n        this.isbn = isbn;\n    }\n\n    public Long getId() {\n        return id;\n    }\n\n    public String getTitle() {\n        return title;\n    }\n\n    public void setTitle(String title) {\n        this.title = title;\n    }\n\n    public String getAuthor() {\n        return author;\n    }\n\n    public void setAuthor(String author) {\n        this.author = author;\n    }\n\n    public String getIsbn() {\n        return isbn;\n    }\n\n    public void setIsbn(String isbn) {\n        this.isbn = isbn;\n    }\n\n    public boolean isAvailable() {\n        return available;\n    }\n\n    public void setAvailable(boolean available) {\n        this.available = available;\n    }\n}"
+  },
+  {
+    "query": "Where is the protected no-arg constructor required by JPA in the Spring Book entity?",
+    "answer": "Block Book (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\Book.java for java8 / java8 v2.\n\nCode:\n    protected Book() {\n    }"
+  },
+  {
+    "query": "Which constructor populates the Book JPA entity with title, author, and isbn values?",
+    "answer": "Block Book (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\Book.java for java8 / java8 v2.\n\nCode:\n    public Book(String title, String author, String isbn) {\n        this.title = title;\n        this.author = author;\n        this.isbn = isbn;\n    }"
+  },
+  {
+    "query": "Where is the getter exposing the generated id on the REST Book entity?",
+    "answer": "Block getId (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\Book.java for java8 / java8 v2.\n\nCode:\n    public Long getId() {\n        return id;\n    }"
+  },
+  {
+    "query": "Which setter updates the title field on the JPA-backed Book class?",
+    "answer": "Block setTitle (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\Book.java for java8 / java8 v2.\n\nCode:\n    public void setTitle(String title) {\n        this.title = title;\n    }"
+  },
+  {
+    "query": "Where does the Spring entity setter assign a new author string?",
+    "answer": "Block setAuthor (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\Book.java for java8 / java8 v2.\n\nCode:\n    public void setAuthor(String author) {\n        this.author = author;\n    }"
+  },
+  {
+    "query": "Which setter persists an updated ISBN value on the Book entity?",
+    "answer": "Block setIsbn (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\Book.java for java8 / java8 v2.\n\nCode:\n    public void setIsbn(String isbn) {\n        this.isbn = isbn;\n    }"
+  },
+  {
+    "query": "Where does the Book entity publicly flip its availability flag?",
+    "answer": "Block setAvailable (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\Book.java for java8 / java8 v2.\n\nCode:\n    public void setAvailable(boolean available) {\n        this.available = available;\n    }"
+  },
+  {
+    "query": "Which constructor on BookController wires the repository dependency for Spring MVC?",
+    "answer": "Block BookController (method) located in java8\\v2\\src\\main\\java\\legacy\\library\\BookController.java for java8 / java8 v2.\n\nCode:\n    public BookController(BookRepository repository) {\n        this.repository = repository;\n    }"
+  },
+  {
+    "query": "Where is the BookController class showing every REST endpoint for books?",
+    "answer": "Block BookController (class) located in java8\\v2\\src\\main\\java\\legacy\\library\\BookController.java for java8 / java8 v2.\n\nCode:\npublic class BookController {\n    private final BookRepository repository;\n\n    public BookController(BookRepository repository) {\n        this.repository = repository;\n    }\n\n    @PostMapping\n    public Book create(@RequestBody Book book) {\n        return repository.save(book);\n    }\n\n    @GetMapping(\"/{isbn}\")\n    public ResponseEntity<Book> read(@PathVariable String isbn) {\n        Book book = repository.findByIsbn(isbn);\n        return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();\n    }\n\n    @GetMapping\n    public List<Book> list() {\n        return repository.findByAvailable(true);\n    }\n\n    @PutMapping(\"/{isbn}/checkout\")\n    public ResponseEntity<Book> checkout(@PathVariable String isbn) {\n        Book book = repository.findByIsbn(isbn);\n        if (book == null) {\n            return ResponseEntity.notFound().build();\n        }\n        book.setAvailable(false);\n        return ResponseEntity.ok(repository.save(book));\n    }\n\n    @DeleteMapping(\"/{isbn}\")\n    public ResponseEntity<Void> delete(@PathVariable String isbn) {\n        Book book = repository.findByIsbn(isbn);\n        if (book == null) {\n            return ResponseEntity.notFound().build();\n        }\n        repository.delete(book);\n        return ResponseEntity.noContent().build();\n    }\n}"
+  },
+  {
+    "query": "Which pom.xml section lists the Spring Boot JPA, web, and H2 dependencies?",
+    "answer": "Block section-4 (section) located in java8\\v2\\pom.xml for java8 / java8 v2.\n\nCode:\n<dependencies>\n        <dependency>\n            <groupId>org.springframework.boot</groupId>\n            <artifactId>spring-boot-starter-data-jpa</artifactId>\n        </dependency>\n        <dependency>\n            <groupId>org.springframework.boot</groupId>\n            <artifactId>spring-boot-starter-web</artifactId>\n        </dependency>\n        <dependency>\n            <groupId>com.h2database</groupId>\n            <artifactId>h2</artifactId>\n            <scope>runtime</scope>\n        </dependency>\n    </dependencies>"
+  },
+  {
+    "query": "Where does pom.xml inherit from spring-boot-starter-parent version 1.5.22.RELEASE?",
+    "answer": "Block section-2 (section) located in java8\\v2\\pom.xml for java8 / java8 v2.\n\nCode:\n<parent>\n        <groupId>org.springframework.boot</groupId>\n        <artifactId>spring-boot-starter-parent</artifactId>\n        <version>1.5.22.RELEASE</version>\n    </parent>"
+  },
+  {
+    "query": "Which fragment of pom.xml pins the Java compiler level to 1.8?",
+    "answer": "Block section-3 (section) located in java8\\v2\\pom.xml for java8 / java8 v2.\n\nCode:\n<properties>\n        <java.version>1.8</java.version>\n    </properties>"
+  },
+  {
+    "query": "Where does pom.xml declare the project coordinates for the legacy library manager jar?",
+    "answer": "Block section-1 (section) located in java8\\v2\\pom.xml for java8 / java8 v2.\n\nCode:\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\">\n    <modelVersion>4.0.0</modelVersion>\n    <groupId>legacy.library</groupId>\n    <artifactId>library-manager</artifactId>\n    <version>1.0.0</version>\n    <packaging>jar</packaging>"
+  },
+  {
+    "query": "Which resource file configures the H2 in-memory datasource and enables the console?",
+    "answer": "Block section-1 (section) located in java8\\v2\\src\\main\\resources\\application.properties for java8 / java8 v2.\n\nCode:\nspring.datasource.url=jdbc:h2:mem:legacydb\nspring.datasource.username=sa\nspring.datasource.password=\nspring.jpa.hibernate.ddl-auto=update\nspring.h2.console.enabled=true"
+  },
+  {
+    "query": "Where can I see the Spring Data repository that exposes findByAvailable and findByIsbn?",
+    "answer": "Block file (file) located in java8\\v2\\src\\main\\java\\legacy\\library\\BookRepository.java for java8 / java8 v2.\n\nCode:\npackage legacy.library;\n\nimport java.util.List;\n\nimport org.springframework.data.repository.CrudRepository;\n\npublic interface BookRepository extends CrudRepository<Book, Long> {\n    List<Book> findByAvailable(boolean available);\n    Book findByIsbn(String isbn);\n}\n"
+  }
+]

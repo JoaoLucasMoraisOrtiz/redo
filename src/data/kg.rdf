@@ -1,0 +1,20 @@
+@prefix kg: <http://example.org/kg/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+kg:api_v1 a kg:Concept ;
+    rdfs:label "API v1" ;
+    kg:has_route kg:route_session ;
+    kg:is_a_type_of kg:apifunction ;
+    kg:replaced_by kg:api_v2 .
+
+kg:api_v2 a kg:Concept ;
+    rdfs:label "API v2" ;
+    kg:is_a_type_of kg:apifunction .
+
+kg:route_session a kg:Concept ;
+    rdfs:label "route /session" ;
+    kg:documented_in "doc_api_v1.md" .
+
+kg:apifunction a kg:Concept ;
+    rdfs:label "API Function" .
+

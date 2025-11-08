@@ -1,0 +1,1074 @@
+@prefix tw: <http://example.org/train/vocab/> .
+
+<http://example.org/train/artifact/cobol/v1/e17ba39cb5fc5304b3a6ef36a4bcd82f5ea1c5a3> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v1> ;
+    tw:code """       IDENTIFICATION DIVISION.
+       PROGRAM-ID. LIBRARY-BASIC.
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT BOOK-FILE ASSIGN TO "books.dat"
+              ORGANIZATION IS LINE SEQUENTIAL.
+       DATA DIVISION.
+       FILE SECTION.
+       FD  BOOK-FILE.
+       01  BOOK-RECORD.
+           05 ISBN        PIC X(13).
+           05 TITLE       PIC X(40).
+           05 AUTHOR      PIC X(30).
+           05 AVAILABLE   PIC X(01).
+       WORKING-STORAGE SECTION.
+       01  WS-OPTION      PIC X VALUE SPACE.
+       01  WS-END         PIC X VALUE 'N'.
+       01  WS-ISBN        PIC X(13).
+       01  WS-TITLE       PIC X(40).
+       01  WS-AUTHOR      PIC X(30).
+       PROCEDURE DIVISION.
+       MAIN-LOOP.
+           DISPLAY "LIBRARY CRUD - COBOL V1".
+           PERFORM UNTIL WS-END = 'Y'
+               DISPLAY "C)reate R)ead U)pdate D)elete L)ist E)xit"
+               ACCEPT WS-OPTION
+               EVALUATE WS-OPTION
+                   WHEN 'C' PERFORM ADD-BOOK
+                   WHEN 'R' PERFORM READ-BOOK
+                   WHEN 'U' PERFORM UPDATE-BOOK
+                   WHEN 'D' PERFORM DELETE-BOOK
+                   WHEN 'L' PERFORM LIST-BOOKS
+                   WHEN 'E' MOVE 'Y' TO WS-END
+                   WHEN OTHER DISPLAY "INVALID OPTION"
+               END-EVALUATE
+           END-PERFORM
+           STOP RUN.
+
+       ADD-BOOK.
+           DISPLAY "ISBN: "
+           ACCEPT WS-ISBN
+           DISPLAY "TITLE: "
+           ACCEPT WS-TITLE
+           DISPLAY "AUTHOR: "
+           ACCEPT WS-AUTHOR
+           MOVE WS-ISBN TO ISBN
+           MOVE WS-TITLE TO TITLE
+           MOVE WS-AUTHOR TO AUTHOR
+           MOVE 'Y' TO AVAILABLE
+           OPEN EXTEND BOOK-FILE
+           WRITE BOOK-RECORD
+           CLOSE BOOK-FILE.
+
+       READ-BOOK.
+           DISPLAY "ISBN TO SEARCH: "
+           ACCEPT WS-ISBN
+           OPEN INPUT BOOK-FILE
+           PERFORM UNTIL EOF
+               READ BOOK-FILE
+                   AT END EXIT PERFORM
+               END-READ
+               IF ISBN = WS-ISBN THEN
+                   DISPLAY "FOUND: " TITLE " BY " AUTHOR
+                   DISPLAY "AVAILABLE: " AVAILABLE
+                   EXIT PERFORM
+               END-IF
+           END-PERFORM
+           CLOSE BOOK-FILE.
+
+       UPDATE-BOOK.
+           DISPLAY "ISBN TO UPDATE: "
+           ACCEPT WS-ISBN
+           DISPLAY "NEW TITLE: "
+           ACCEPT WS-TITLE
+           OPEN I-O BOOK-FILE
+           PERFORM UNTIL EOF
+               READ BOOK-FILE
+                   AT END EXIT PERFORM
+               END-READ
+               IF ISBN = WS-ISBN THEN
+                   MOVE WS-TITLE TO TITLE
+                   REWRITE BOOK-RECORD
+                   DISPLAY "UPDATED"
+                   EXIT PERFORM
+               END-IF
+           END-PERFORM
+           CLOSE BOOK-FILE.
+
+       DELETE-BOOK.
+           DISPLAY "ISBN TO DELETE: "
+           ACCEPT WS-ISBN
+           OPEN I-O BOOK-FILE
+           PERFORM UNTIL EOF
+               READ BOOK-FILE
+                   AT END EXIT PERFORM
+               END-READ
+               IF ISBN = WS-ISBN THEN
+                   DELETE BOOK-FILE RECORD
+                   DISPLAY "DELETED"
+                   EXIT PERFORM
+               END-IF
+           END-PERFORM
+           CLOSE BOOK-FILE.
+
+       LIST-BOOKS.
+           OPEN INPUT BOOK-FILE
+           PERFORM UNTIL EOF
+               READ BOOK-FILE
+                   AT END EXIT PERFORM
+               END-READ
+               DISPLAY ISBN " - " TITLE " (" AUTHOR ")"
+           END-PERFORM
+           CLOSE BOOK-FILE.
+""" ;
+    tw:path "cobol\\v1\\library-basic.cob" .
+
+<http://example.org/train/artifact/cobol/v2/7b131521a1b27247f4d5f6b157c69028f91fdcfb> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v2> ;
+    tw:code """       IDENTIFICATION DIVISION.
+       PROGRAM-ID. LIBRARY-DB2.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       EXEC SQL INCLUDE SQLCA END-EXEC.
+       01  WS-ISBN        PIC X(13).
+       01  WS-TITLE       PIC X(50).
+       01  WS-AUTHOR      PIC X(30).
+       01  WS-AVAILABLE   PIC X(01).
+       PROCEDURE DIVISION.
+           DISPLAY "COBOL + DB2 CRUD V2".
+           PERFORM DB-CONNECT.
+           PERFORM SAMPLE-OPERATIONS.
+           PERFORM DB-DISCONNECT.
+           STOP RUN.
+
+       DB-CONNECT.
+           EXEC SQL
+               CONNECT TO LEGACYDB
+           END-EXEC.
+           IF SQLCODE NOT = 0 THEN
+               DISPLAY "CONNECT FAILED" SQLCODE
+               STOP RUN
+           END-IF.
+
+       SAMPLE-OPERATIONS.
+           MOVE '978-0-2000000' TO WS-ISBN.
+           MOVE 'Mainframe Patterns' TO WS-TITLE.
+           MOVE 'IBM Press' TO WS-AUTHOR.
+           MOVE 'Y' TO WS-AVAILABLE.
+           EXEC SQL
+               INSERT INTO LIB_BOOK (ISBN, TITLE, AUTHOR, AVAILABLE)
+               VALUES (:WS-ISBN, :WS-TITLE, :WS-AUTHOR, :WS-AVAILABLE)
+           END-EXEC.
+           DISPLAY "Inserted " WS-ISBN.
+
+           EXEC SQL
+               SELECT TITLE, AUTHOR, AVAILABLE
+               INTO :WS-TITLE, :WS-AUTHOR, :WS-AVAILABLE
+               FROM LIB_BOOK WHERE ISBN = :WS-ISBN
+           END-EXEC.
+           IF SQLCODE = 0 THEN
+               DISPLAY "Read " WS-TITLE
+           END-IF.
+
+           MOVE 'N' TO WS-AVAILABLE.
+           EXEC SQL
+               UPDATE LIB_BOOK
+               SET AVAILABLE = :WS-AVAILABLE
+               WHERE ISBN = :WS-ISBN
+           END-EXEC.
+           DISPLAY "Updated availability".
+
+           EXEC SQL
+               DELETE FROM LIB_BOOK WHERE ISBN = :WS-ISBN
+           END-EXEC.
+           DISPLAY "Deleted " WS-ISBN.
+
+       DB-DISCONNECT.
+           EXEC SQL COMMIT END-EXEC.
+           EXEC SQL DISCONNECT CURRENT END-EXEC.
+""" ;
+    tw:path "cobol\\v2\\library-db2.cob" .
+
+<http://example.org/train/artifact/cobol/v2/e786b0c00cc4a80160018a6640ba456260663288> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/cobol/v2> ;
+    tw:code """Legacy COBOL program using embedded SQL for IBM DB2.
+Requires DB2 precompiler (DSNHPC) and catalog table LIB_BOOK with columns:
+  ISBN CHAR(13) PRIMARY KEY
+  TITLE VARCHAR(50)
+  AUTHOR VARCHAR(30)
+  AVAILABLE CHAR(1)
+Compile with Enterprise COBOL 4.x or compatible, enabling embedded SQL.
+""" ;
+    tw:path "cobol\\v2\\README.txt" .
+
+<http://example.org/train/artifact/delphi/v1/4a5923546c2ef6ff4776bff4535f916f26c6c7f0> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v1> ;
+    tw:code """unit LibraryManager;
+
+interface
+
+uses
+  Classes, SysUtils;
+
+type
+  TBook = class
+  private
+    FIsbn: string;
+    FTitle: string;
+    FAuthor: string;
+    FAvailable: Boolean;
+  public
+    constructor Create(const AIsbn, ATitle, AAuthor: string);
+    property Isbn: string read FIsbn;
+    property Title: string read FTitle write FTitle;
+    property Author: string read FAuthor write FAuthor;
+    property Available: Boolean read FAvailable write FAvailable;
+  end;
+
+  TLibraryManager = class
+  private
+    FBooks: TList;
+    function FindBook(const AIsbn: string): TBook;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure AddBook(const AIsbn, ATitle, AAuthor: string);
+    function GetBook(const AIsbn: string): TBook;
+    procedure UpdateTitle(const AIsbn, ATitle: string);
+    procedure RemoveBook(const AIsbn: string);
+    procedure ListBooks(AStrings: TStrings);
+  end;
+
+implementation
+
+{ TBook }
+
+constructor TBook.Create(const AIsbn, ATitle, AAuthor: string);
+begin
+  inherited Create;
+  FIsbn := AIsbn;
+  FTitle := ATitle;
+  FAuthor := AAuthor;
+  FAvailable := True;
+end;
+
+{ TLibraryManager }
+
+constructor TLibraryManager.Create;
+begin
+  inherited Create;
+  FBooks := TList.Create;
+end;
+
+destructor TLibraryManager.Destroy;
+var
+  I: Integer;
+begin
+  for I := 0 to FBooks.Count - 1 do
+    TObject(FBooks[I]).Free;
+  FBooks.Free;
+  inherited Destroy;
+end;
+
+function TLibraryManager.FindBook(const AIsbn: string): TBook;
+var
+  I: Integer;
+  Book: TBook;
+begin
+  Result := nil;
+  for I := 0 to FBooks.Count - 1 do
+  begin
+    Book := TBook(FBooks[I]);
+    if SameText(Book.Isbn, AIsbn) then
+    begin
+      Result := Book;
+      Exit;
+    end;
+  end;
+end;
+
+procedure TLibraryManager.AddBook(const AIsbn, ATitle, AAuthor: string);
+begin
+  FBooks.Add(TBook.Create(AIsbn, ATitle, AAuthor));
+end;
+
+function TLibraryManager.GetBook(const AIsbn: string): TBook;
+begin
+  Result := FindBook(AIsbn);
+end;
+
+procedure TLibraryManager.UpdateTitle(const AIsbn, ATitle: string);
+var
+  Book: TBook;
+begin
+  Book := FindBook(AIsbn);
+  if Assigned(Book) then
+    Book.Title := ATitle;
+end;
+
+procedure TLibraryManager.RemoveBook(const AIsbn: string);
+var
+  Book: TBook;
+begin
+  Book := FindBook(AIsbn);
+  if Assigned(Book) then
+  begin
+    FBooks.Remove(Book);
+    Book.Free;
+  end;
+end;
+
+procedure TLibraryManager.ListBooks(AStrings: TStrings);
+var
+  I: Integer;
+  Book: TBook;
+begin
+  AStrings.Clear;
+  for I := 0 to FBooks.Count - 1 do
+  begin
+    Book := TBook(FBooks[I]);
+    AStrings.Add(Format('%s - %s (%s)', [Book.Isbn, Book.Title, Book.Author]));
+  end;
+end;
+
+end.
+""" ;
+    tw:path "delphi\\v1\\LibraryManager.pas" .
+
+<http://example.org/train/artifact/delphi/v2/2e74b056220a3e7926e657f467cc045e108b08fc> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """unit LibraryDataModule;
+
+interface
+
+uses
+  SysUtils, Classes, DB, ADODB;
+
+type
+  TdmLibrary = class(TDataModule)
+    Connection: TADOConnection;
+    TableBooks: TADOTable;
+  public
+    procedure SetupConnection;
+    procedure CreateBook(const AIsbn, ATitle, AAuthor: string);
+    function FindBook(const AIsbn: string): Boolean;
+    procedure UpdateAvailability(const AIsbn: string; AAvailable: Boolean);
+    procedure DeleteBook(const AIsbn: string);
+  end;
+
+var
+  dmLibrary: TdmLibrary;
+
+implementation
+
+{$R *.dfm}
+
+procedure TdmLibrary.SetupConnection;
+begin
+  Connection.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=library.mdb;Persist Security Info=False;';
+  Connection.LoginPrompt := False;
+  Connection.Open;
+  TableBooks.Connection := Connection;
+  TableBooks.TableName := 'LIB_BOOK';
+  TableBooks.Open;
+end;
+
+procedure TdmLibrary.CreateBook(const AIsbn, ATitle, AAuthor: string);
+begin
+  TableBooks.Insert;
+  TableBooks.FieldByName('ISBN').AsString := AIsbn;
+  TableBooks.FieldByName('TITLE').AsString := ATitle;
+  TableBooks.FieldByName('AUTHOR').AsString := AAuthor;
+  TableBooks.FieldByName('AVAILABLE').AsBoolean := True;
+  TableBooks.Post;
+end;
+
+function TdmLibrary.FindBook(const AIsbn: string): Boolean;
+begin
+  Result := TableBooks.Locate('ISBN', AIsbn, []);
+end;
+
+procedure TdmLibrary.UpdateAvailability(const AIsbn: string; AAvailable: Boolean);
+begin
+  if FindBook(AIsbn) then
+  begin
+    TableBooks.Edit;
+    TableBooks.FieldByName('AVAILABLE').AsBoolean := AAvailable;
+    TableBooks.Post;
+  end;
+end;
+
+procedure TdmLibrary.DeleteBook(const AIsbn: string);
+begin
+  if FindBook(AIsbn) then
+    TableBooks.Delete;
+end;
+
+end.
+""" ;
+    tw:path "delphi\\v2\\LibraryDataModule.pas" .
+
+<http://example.org/train/artifact/delphi/v2/763131a907f0c261446acb2c72bdbb2f103a23ff> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """object dmLibrary: TdmLibrary
+  OldCreateOrder = False
+  Height = 240
+  Width = 320
+  object Connection: TADOConnection
+    LoginPrompt = False
+    Left = 24
+    Top = 24
+  end
+  object TableBooks: TADOTable
+    Connection = Connection
+    CursorType = ctStatic
+    TableName = 'LIB_BOOK'
+    Left = 120
+    Top = 24
+  end
+end
+""" ;
+    tw:path "delphi\\v2\\LibraryDataModule.dfm" .
+
+<http://example.org/train/artifact/delphi/v2/ea344c40cb6bf4ed611e9bd2729cfb686cfe65c5> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/delphi/v2> ;
+    tw:code """Delphi 7 style data module using ADO components for CRUD operations.
+Requirements:
+- Microsoft Jet OLEDB 4.0 provider
+- Table LIB_BOOK in Access (library.mdb) with fields: ISBN (Text), TITLE (Text), AUTHOR (Text), AVAILABLE (Yes/No)
+Open project in Delphi 7 or RAD Studio 2007 and include LibraryDataModule.pas/dfm in the project.
+""" ;
+    tw:path "delphi\\v2\\README.txt" .
+
+<http://example.org/train/artifact/java6/v1/fbdfe9ceb7cba01f107a119a5cac158b845f9236> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v1> ;
+    tw:code """import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Basic CRUD for a legacy Java 6 console application managing books in a library.
+ */
+public class LibraryManagement {
+    private final List<Book> catalog = new ArrayList<Book>();
+
+    public void createBook(String isbn, String title, String author) {
+        Book book = new Book(isbn, title, author);
+        catalog.add(book);
+        System.out.println("Created book: " + book);
+    }
+
+    public Book readBook(String isbn) {
+        for (Book book : catalog) {
+            if (book.getIsbn().equals(isbn)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    public void updateBookTitle(String isbn, String newTitle) {
+        Book book = readBook(isbn);
+        if (book != null) {
+            book.setTitle(newTitle);
+            System.out.println("Updated book: " + book);
+        } else {
+            System.out.println("Book not found: " + isbn);
+        }
+    }
+
+    public void deleteBook(String isbn) {
+        for (Iterator<Book> iterator = catalog.iterator(); iterator.hasNext();) {
+            Book book = iterator.next();
+            if (book.getIsbn().equals(isbn)) {
+                iterator.remove();
+                System.out.println("Deleted book: " + isbn);
+                return;
+            }
+        }
+        System.out.println("Book not found: " + isbn);
+    }
+
+    public void listBooks() {
+        System.out.println("Catalog:");
+        for (Book book : catalog) {
+            System.out.println(" - " + book);
+        }
+    }
+
+    public static void main(String[] args) {
+        LibraryManagement manager = new LibraryManagement();
+        manager.createBook("978-0-00", "Legacy Java 6", "Sun Microsystems");
+        manager.createBook("978-0-01", "Patterns", "GoF");
+        manager.listBooks();
+        manager.updateBookTitle("978-0-01", "Design Patterns");
+        manager.listBooks();
+        manager.deleteBook("978-0-00");
+        manager.listBooks();
+    }
+}
+
+class Book {
+    private String isbn;
+    private String title;
+    private String author;
+
+    public Book(String isbn, String title, String author) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String toString() {
+        return isbn + " - " + title + " (" + author + ")";
+    }
+}
+""" ;
+    tw:path "java6\\v1\\LibraryManagement.java" .
+
+<http://example.org/train/artifact/java6/v2/0a34fe24eb8a118871cfd2d7253c638943ea7f9e> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+/**
+ * Legacy DAO using Hibernate 3 for CRUD operations.
+ */
+public class LibraryDao {
+    private static final SessionFactory SESSION_FACTORY;
+
+    static {
+        Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
+        SESSION_FACTORY = configuration.buildSessionFactory();
+    }
+
+    public void create(LibraryEntity entity) {
+        Session session = SESSION_FACTORY.openSession();
+        Transaction tx = session.beginTransaction();
+        session.save(entity);
+        tx.commit();
+        session.close();
+    }
+
+    public LibraryEntity read(String isbn) {
+        Session session = SESSION_FACTORY.openSession();
+        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);
+        session.close();
+        return entity;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<LibraryEntity> list() {
+        Session session = SESSION_FACTORY.openSession();
+        List<LibraryEntity> result = session.createQuery("from LibraryEntity").list();
+        session.close();
+        return result;
+    }
+
+    public void updateTitle(String isbn, String newTitle) {
+        Session session = SESSION_FACTORY.openSession();
+        Transaction tx = session.beginTransaction();
+        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);
+        if (entity != null) {
+            entity.setTitle(newTitle);
+            session.update(entity);
+        }
+        tx.commit();
+        session.close();
+    }
+
+    public void delete(String isbn) {
+        Session session = SESSION_FACTORY.openSession();
+        Transaction tx = session.beginTransaction();
+        LibraryEntity entity = (LibraryEntity) session.get(LibraryEntity.class, isbn);
+        if (entity != null) {
+            session.delete(entity);
+        }
+        tx.commit();
+        session.close();
+    }
+}
+""" ;
+    tw:path "java6\\v2\\LibraryDao.java" .
+
+<http://example.org/train/artifact/java6/v2/abaac4b0c7dcd01328b3afa799d064f8262f2553> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+/**
+ * Hibernate 3 / JPA 1 entity for legacy Java 6 application.
+ */
+@Entity
+@Table(name = "LIB_BOOK")
+public class LibraryEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "ISBN", nullable = false, length = 20)
+    private String isbn;
+
+    @Column(name = "TITLE", nullable = false, length = 150)
+    private String title;
+
+    @Column(name = "AUTHOR", nullable = false, length = 100)
+    private String author;
+
+    public LibraryEntity() {
+    }
+
+    public LibraryEntity(String isbn, String title, String author) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+}
+""" ;
+    tw:path "java6\\v2\\LibraryEntity.java" .
+
+<http://example.org/train/artifact/java6/v2/eaf4be9222772bd925820b2ed52c68cea1880bda> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.h2.Driver</property>
+        <property name="hibernate.connection.url">jdbc:h2:mem:legacy</property>
+        <property name="hibernate.connection.username">sa</property>
+        <property name="hibernate.connection.password"></property>
+        <property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <mapping class="LibraryEntity"/>
+    </session-factory>
+</hibernate-configuration>
+""" ;
+    tw:path "java6\\v2\\hibernate.cfg.xml" .
+
+<http://example.org/train/artifact/java6/v2/f1b9db5f429426db461292b9173bd6e596981907> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java6/v2> ;
+    tw:code """Legacy Java 6 CRUD using Hibernate 3.x SessionFactory.
+Dependencies:
+- hibernate-core 3.6.x
+- h2 database (for testing)
+- javax.persistence 1.0 API
+Compile with JDK 1.6 and include the dependencies above on the classpath.
+""" ;
+    tw:path "java6\\v2\\README.txt" .
+
+<http://example.org/train/artifact/java8/v1/ba021668a0fe4185245e14f934cfd4303e765302> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v1> ;
+    tw:code """import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+public class LibraryManager {
+    private final List<Book> catalog = new ArrayList<Book>();
+
+    public void create(Book book) {
+        catalog.add(book);
+    }
+
+    public Optional<Book> read(String isbn) {
+        return catalog.stream().filter(book -> book.getIsbn().equals(isbn)).findFirst();
+    }
+
+    public void updateAvailability(String isbn, boolean available) {
+        read(isbn).ifPresent(book -> {
+            book.setAvailable(available);
+            book.setLastUpdated(LocalDate.now());
+        });
+    }
+
+    public void delete(String isbn) {
+        catalog.removeIf(book -> book.getIsbn().equals(isbn));
+    }
+
+    public List<Book> listAvailable() {
+        return catalog.stream().filter(Book::isAvailable).collect(Collectors.toList());
+    }
+
+    public static void main(String[] args) {
+        LibraryManager manager = new LibraryManager();
+        manager.create(new Book("978-0-100", "Java 8 in Action", "Raoul-Gabriel", true));
+        manager.create(new Book("978-0-101", "Refactoring", "Martin Fowler", true));
+        System.out.println("Available books: " + manager.listAvailable().size());
+        manager.updateAvailability("978-0-101", false);
+        System.out.println("After checkout: " + manager.listAvailable().size());
+        manager.delete("978-0-100");
+        System.out.println("Remaining: " + manager.catalog.size());
+    }
+}
+
+class Book {
+    private final String isbn;
+    private final String title;
+    private final String author;
+    private boolean available;
+    private LocalDate lastUpdated;
+
+    public Book(String isbn, String title, String author, boolean available) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+        this.available = available;
+        this.lastUpdated = LocalDate.now();
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public LocalDate getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDate lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public String toString() {
+        return isbn + " - " + title + " (" + author + ")";
+    }
+}
+""" ;
+    tw:path "java8\\v1\\LibraryManager.java" .
+
+<http://example.org/train/artifact/java8/v2/069610910870059d4d83130a398ba9ceeec6df75> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """package legacy.library;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+
+public interface BookRepository extends CrudRepository<Book, Long> {
+    List<Book> findByAvailable(boolean available);
+    Book findByIsbn(String isbn);
+}
+""" ;
+    tw:path "java8\\v2\\src\\main\\java\\legacy\\library\\BookRepository.java" .
+
+<http://example.org/train/artifact/java8/v2/1920c6772523144f787c2e85e282db9a5e6f4640> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>legacy.library</groupId>
+    <artifactId>library-manager</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.22.RELEASE</version>
+    </parent>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+""" ;
+    tw:path "java8\\v2\\pom.xml" .
+
+<http://example.org/train/artifact/java8/v2/1ce1c8be7f0fa1a808d8e6e8759a40282298554d> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """package legacy.library;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LibraryApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(LibraryApplication.class, args);
+    }
+}
+""" ;
+    tw:path "java8\\v2\\src\\main\\java\\legacy\\library\\LibraryApplication.java" .
+
+<http://example.org/train/artifact/java8/v2/8609a21c94f1e2f096b18a3bc02bb77995606422> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """package legacy.library;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/books")
+public class BookController {
+    private final BookRepository repository;
+
+    public BookController(BookRepository repository) {
+        this.repository = repository;
+    }
+
+    @PostMapping
+    public Book create(@RequestBody Book book) {
+        return repository.save(book);
+    }
+
+    @GetMapping("/{isbn}")
+    public ResponseEntity<Book> read(@PathVariable String isbn) {
+        Book book = repository.findByIsbn(isbn);
+        return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping
+    public List<Book> list() {
+        return repository.findByAvailable(true);
+    }
+
+    @PutMapping("/{isbn}/checkout")
+    public ResponseEntity<Book> checkout(@PathVariable String isbn) {
+        Book book = repository.findByIsbn(isbn);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        book.setAvailable(false);
+        return ResponseEntity.ok(repository.save(book));
+    }
+
+    @DeleteMapping("/{isbn}")
+    public ResponseEntity<Void> delete(@PathVariable String isbn) {
+        Book book = repository.findByIsbn(isbn);
+        if (book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        repository.delete(book);
+        return ResponseEntity.noContent().build();
+    }
+}
+""" ;
+    tw:path "java8\\v2\\src\\main\\java\\legacy\\library\\BookController.java" .
+
+<http://example.org/train/artifact/java8/v2/f1d3d5c465099f9c387af05eb5b19e0010021ded> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """package legacy.library;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
+    private String author;
+
+    @Column(nullable = false)
+    private String isbn;
+
+    @Column(nullable = false)
+    private boolean available = true;
+
+    protected Book() {
+    }
+
+    public Book(String title, String author, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+}
+""" ;
+    tw:path "java8\\v2\\src\\main\\java\\legacy\\library\\Book.java" .
+
+<http://example.org/train/artifact/java8/v2/f2f087535df42fe8688f4c9b482ca3d1b7dfbc9b> a tw:Artifact ;
+    tw:belongsToVersion <http://example.org/train/version/java8/v2> ;
+    tw:code """spring.datasource.url=jdbc:h2:mem:legacydb
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+spring.h2.console.enabled=true
+""" ;
+    tw:path "java8\\v2\\src\\main\\resources\\application.properties" .
+
+<http://example.org/train/version/cobol/v1> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:label "cobol v1" .
+
+<http://example.org/train/version/delphi/v1> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:label "delphi v1" .
+
+<http://example.org/train/version/java6/v1> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:label "java6 v1" .
+
+<http://example.org/train/version/java8/v1> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:label "java8 v1" .
+
+<http://example.org/train/language/cobol> a tw:Language ;
+    tw:label "cobol" .
+
+<http://example.org/train/language/delphi> a tw:Language ;
+    tw:label "delphi" .
+
+<http://example.org/train/language/java6> a tw:Language ;
+    tw:label "java6" .
+
+<http://example.org/train/language/java8> a tw:Language ;
+    tw:label "java8" .
+
+<http://example.org/train/version/cobol/v2> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/cobol> ;
+    tw:label "cobol v2" .
+
+<http://example.org/train/version/delphi/v2> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/delphi> ;
+    tw:label "delphi v2" .
+
+<http://example.org/train/version/java6/v2> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/java6> ;
+    tw:label "java6 v2" .
+
+<http://example.org/train/version/java8/v2> a tw:ProjectVersion ;
+    tw:belongsToLanguage <http://example.org/train/language/java8> ;
+    tw:label "java8 v2" .
+

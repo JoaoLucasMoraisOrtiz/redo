@@ -1,0 +1,74 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tw: <http://example.org/train/vocab/> .
+
+tw:CodeBlock a rdfs:Class ;
+    rdfs:label "Code Block" ;
+    rdfs:comment "A block of source code (class, method, function, etc.)" .
+
+tw:Language a rdfs:Class ;
+    rdfs:label "Programming Language" .
+
+tw:Version a rdfs:Class ;
+    rdfs:label "Project Version" .
+
+tw:belongsToLanguage a rdf:Property ;
+    rdfs:comment "Language this code belongs to" .
+
+tw:belongsToVersion a rdf:Property ;
+    rdfs:comment "Version/project this code belongs to" .
+
+tw:coOccurrenceWeight a rdf:Property ;
+    rdfs:comment "Co-occurrence confidence from query logs" .
+
+tw:code a rdf:Property ;
+    rdfs:comment "Source code content" .
+
+tw:description a rdf:Property ;
+    rdfs:comment "Natural language description" .
+
+tw:filePath a rdf:Property ;
+    rdfs:comment "Source file path" .
+
+tw:kind a rdf:Property ;
+    rdfs:comment "Type of code block (class, method, function, etc.)" .
+
+tw:label a rdf:Property ;
+    rdfs:comment "Human-readable label" .
+
+tw:language a rdf:Property ;
+    rdfs:comment "Programming language name" .
+
+<http://example.org/train/vocab/language_c#> a tw:Language ;
+    tw:label "C#" .
+
+<http://example.org/train/vocab/language_c++> a tw:Language ;
+    tw:label "C++" .
+
+tw:language_go a tw:Language ;
+    tw:label "Go" .
+
+tw:language_java a tw:Language ;
+    tw:label "Java" .
+
+tw:language_javascript a tw:Language ;
+    tw:label "JavaScript" .
+
+tw:language_python a tw:Language ;
+    tw:label "Python" .
+
+tw:language_rust a tw:Language ;
+    tw:label "Rust" .
+
+tw:language_typescript a tw:Language ;
+    tw:label "TypeScript" .
+
+tw:name a rdf:Property ;
+    rdfs:comment "Name of the code block" .
+
+tw:relatedTo a rdf:Property ;
+    rdfs:comment "Semantic relationship to another code block" .
+
+tw:weight a rdf:Property ;
+    rdfs:comment "Edge weight (similarity score)" .
+
